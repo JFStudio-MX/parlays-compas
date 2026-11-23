@@ -32,18 +32,43 @@ LIGAS = {
     "fra.1": ("soccer", "Ligue 1", "futbol"),
     "uefa.champions": ("soccer", "Champions League", "futbol"),
     "uefa.europa": ("soccer", "Europa League", "futbol"),
+    "uefa.europa.conf": ("soccer", "Conference League", "futbol"),
+    "ned.1": ("soccer", "Eredivisie", "futbol"),
+    "por.1": ("soccer", "Liga Portugal", "futbol"),
+    "tur.1": ("soccer", "Superliga Turquía", "futbol"),
+    "bel.1": ("soccer", "Liga Bélgica", "futbol"),
+    "sco.1": ("soccer", "Premiership Escocia", "futbol"),
+    "eng.2": ("soccer", "Championship", "futbol"),
+    "bra.1": ("soccer", "Brasileirão", "futbol"),
+    "arg.1": ("soccer", "Liga Argentina", "futbol"),
+    "usa.1": ("soccer", "MLS", "futbol"),
+    "ksa.1": ("soccer", "Liga Saudí", "futbol"),
+    "jpn.1": ("soccer", "J-League", "futbol"),
+    "conmebol.libertadores": ("soccer", "Libertadores", "futbol"),
+    "conmebol.sudamericana": ("soccer", "Sudamericana", "futbol"),
+    "esp.copa_del_rey": ("soccer", "Copa del Rey", "futbol"),
+    "eng.fa": ("soccer", "FA Cup", "futbol"),
+    "ita.coppa_italia": ("soccer", "Coppa Italia", "futbol"),
+    "ger.dfb_pokal": ("soccer", "Copa de Alemania", "futbol"),
+    "ufc": ("mma", "UFC", "ufc"),
     "mens-college-basketball": ("basketball", "NCAA Básquet", "ncaab"),
     "college-football": ("football", "NCAA Americano", "ncaaf"),
 }
 NCAA = {"mens-college-basketball", "college-football"}
+# copas: el historial de cada equipo sale de su liga (o de todos sus partidos si ESPN no cubre su liga)
+COPAS = {"uefa.champions", "uefa.europa", "uefa.europa.conf", "conmebol.libertadores", "conmebol.sudamericana",
+         "esp.copa_del_rey", "eng.fa", "ita.coppa_italia", "ger.dfb_pokal"}
+INDIVIDUALES = {"ufc"}  # no van por equipos: tienen su propio módulo
 # de aquí sale el historial de los equipos que juegan Champions / Europa League
 LIGAS_DOMESTICAS = ["eng.1", "esp.1", "ita.1", "ger.1", "fra.1", "por.1", "ned.1", "mex.1", "bel.1", "sco.1",
                     "tur.1", "aut.1", "sui.1", "gre.1", "cze.1", "den.1", "nor.1", "swe.1", "cro.1", "srb.1",
-                    "ukr.1", "pol.1", "isr.1", "cyp.1", "rou.1", "hun.1", "bul.1", "aze.1", "kaz.1", "svk.1"]
+                    "ukr.1", "pol.1", "isr.1", "cyp.1", "rou.1", "hun.1", "bul.1", "aze.1", "kaz.1", "svk.1",
+                    "eng.2", "esp.2", "ita.2", "ger.2", "fra.2", "bra.1", "arg.1", "col.1", "chi.1", "uru.1",
+                    "par.1", "ecu.1", "per.1", "bol.1", "ven.1"]
 # NCAA usa la misma lógica que NBA / NFL
-BASE = {"nba": "nba", "ncaab": "nba", "nfl": "nfl", "ncaaf": "nfl", "nhl": "nhl", "futbol": "futbol"}
+BASE = {"nba": "nba", "ncaab": "nba", "nfl": "nfl", "ncaaf": "nfl", "nhl": "nhl", "futbol": "futbol", "ufc": "ufc"}
 DEPORTE = {"nba": "NBA", "nfl": "NFL", "nhl": "NHL", "futbol": "Fútbol", "ncaab": "NCAA Básquet",
-           "ncaaf": "NCAA Americano"}
+           "ncaaf": "NCAA Americano", "ufc": "UFC"}
 # Pago Anticipado ("a ganar", apuesta antes del partido): ventaja que lo da por ganado aunque luego pierda
 PA_UMBRAL = {"nba": 20, "nfl": 17, "nhl": 3, "futbol": 2}
 # Qué deportes tienen PA en cada casa (fuentes en LEEME.md). Stake: sus reglas no están claras, no se cuenta.
@@ -251,10 +276,9 @@ def etiqueta_dia(dt, hoy):
 # --------------------------------------------------------------------------- momios del partido
 
 def leer_momios(comp):
-    odds = comp.get("odds") or []
-    if not odds:
+    o = next((x for x in comp.get("odds") or [] if isinstance(x, dict)), None)
+    if not o:
         return None
-    o = odds[0]
 
     def cur(d, cual="close"):
         d = d or {}

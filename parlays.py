@@ -23,7 +23,9 @@ import historial
 import mercados
 import props_odds
 from mercados import PICKS
-from nucleo import (AQUI, B, BASE, BLOQUEO, CACHE, CASAS_PA, DATOS, DEPORTE, DIAS_ES, LIGAS, LIGAS_DOMESTICAS,
+import ufc
+from nucleo import (AQUI, B, BASE, BLOQUEO, CACHE, CASAS_PA, COPAS, DATOS, DEPORTE, DIAS_ES, INDIVIDUALES, LIGAS,
+                    LIGAS_DOMESTICAS,
                     MESES_ES, MX, NCAA, SALIDA, VERSION_PARTIDO, a_mx, americano_de_decimal, calendario,
                     cargar_partido, casa_cubre, escribir_json, etiqueta_dia, get_json, leer_json, leer_momios,
                     momio_pata, rasgos, ultimos_ids)
@@ -34,7 +36,7 @@ CONFIG = DATOS / "config.json"
 CONFIG_DEF = {
     "casa": "Playdoit",               # Playdoit, Caliente, Draftea o Stake (cambia el Pago Anticipado que se cuenta)
     # cuántos días hacia adelante revisa cada deporte (fútbol: la jornada completa con Champions y Europa League)
-    "dias_por_deporte": {"futbol": 8, "nfl": 9, "ncaaf": 7, "nba": 2, "nhl": 2, "ncaab": 2},
+    "dias_por_deporte": {"futbol": 8, "nfl": 9, "ncaaf": 7, "nba": 2, "nhl": 2, "ncaab": 2, "ufc": 14},
     "pago_anticipado": True,          # cuenta el Pago Anticipado de Caliente en los "gana"
     "tope_mensual": 0,                # tope de lo que quieres apostar al mes (0 = sin tope)
     "odds_api_key": "",               # clave gratis de https://the-odds-api.com (momios reales de jugadores)
@@ -114,7 +116,7 @@ def buscar_partidos(ligas, dias, ahora, cfg):
         return res
 
     with ThreadPoolExecutor(HILOS) as ex:
-        juegos = [g for lista in ex.map(scoreboard, ligas) for g in lista]
+        juegos = [g for lista in ex.map(scoreboard, [l for l in ligas if l not in INDIVIDUALES]) for g in lista]
     juegos.sort(key=lambda g: g["orden"])
     return juegos
 
@@ -123,7 +125,7 @@ def buscar_partidos(ligas, dias, ahora, cfg):
 
 def bajar_historial(juegos):
     mapa_domestico = {}
-    if any(g["liga"].startswith("uefa") for g in juegos):
+    if any(g["liga"] in COPAS for g in juegos):
         def equipos_liga(lg):
             d = get_json(f"{B}/soccer/{lg}/teams", ttl=7 * 86400)
             try:
@@ -140,7 +142,7 @@ def bajar_historial(juegos):
         for lado in ("L", "V"):
             tid = g[lado]["id"]
             # copas europeas: historial de su liga; si ESPN no cubre su liga, todos sus partidos (fases previas incluidas)
-            lh = (mapa_domestico.get(tid) or "all") if g["liga"].startswith("uefa") else g["liga"]
+            lh = (mapa_domestico.get(tid) or "all") if g["liga"] in COPAS else g["liga"]
             g[lado]["liga_hist"] = lh
             tareas[(lh, tid)] = (g["sport"], g["base"])
 
@@ -406,6 +408,18 @@ def main():
             combos += mercados.combinadas(g, lado, recs[lado], picks)
         g["picks"] = [p["id"] for p in picks]
         todos += picks
+
+    # ---- UFC (peleadores, no equipos: su propio módulo)
+    if "ufc" in ligas:
+        dias_ufc = int({**CONFIG_DEF["dias_por_deporte"], **(cfg.get("dias_por_deporte") or {})}.get("ufc") or 14)
+        peleas, picks_ufc = ufc.buscar(ahora, max(dias_ufc, args.dias or 0))
+        for p in picks_ufc:
+            p["pa_ok"] = False
+        juegos += peleas
+        todos += picks_ufc
+        juegos.sort(key=lambda g: g["orden"])
+        if peleas:
+            print(f"   UFC: {len(peleas)} peleas")
 
     # ---- candados
     candados = mercados.mejor_por_familia(todos, mercados.cumple_candado)

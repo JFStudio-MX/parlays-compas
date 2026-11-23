@@ -604,7 +604,8 @@ def pool_parlays(todos):
     - De jugador: se cumplieron 80%+ (momio aproximado ≈ o real si hay clave de The Odds API);
       la mejor línea por jugador y stat, y un escalón más fácil para la escalera."""
     equipo = [p for p in todos if p["clase"] == "equipo" and p["n"] >= 12
-              and ((p["real"] and p["momio"]) or (p["fam"] in ("spa_L", "spa_V") and p["hits"] / p["n"] >= 0.7))]
+              and ((p["real"] and p["momio"]) or (p["fam"] in ("spa_L", "spa_V") and p["hits"] / p["n"] >= 0.7)
+                   or (p["deporte"] == "ufc" and p["hits"] / p["n"] >= 0.7))]
     cond = lambda p: p["n"] >= 7 and not p.get("alerta") and p["hits"] / p["n"] >= 0.8
     jug = mejor_por_familia([p for p in todos if p["clase"] == "jugador" and not p.get("joya")], cond)
     fam = {(p["juego"], p["fam"]): p["orden"] for p in jug}

@@ -13,7 +13,10 @@ Abre **Parlays** desde Inicio (o doble clic en `VER PARLAYS.bat`):
 
 **Deja abierta la ventanita negra mientras la uses**: así se guardan tus apuestas.
 
-Ligas: NBA, NFL, NHL, Liga MX, Premier, LaLiga, Serie A, Bundesliga, Ligue 1, Champions, Europa League, NCAA básquet y NCAA americano (en NCAA solo partidos con equipos del top 25).
+Ligas: NBA, NFL, NHL, UFC, NCAA básquet y NCAA americano (en NCAA solo partidos con equipos del top 25).
+Fútbol: Liga MX, Premier, LaLiga, Serie A, Bundesliga, Ligue 1, Eredivisie, Liga Portugal, Turquía, Bélgica, Escocia, Championship, Brasileirão, Argentina, MLS, Arabia, J-League, Champions, Europa League, Conference, Libertadores, Sudamericana y las copas de España, Inglaterra, Italia y Alemania (para los días en que no hay nada).
+UFC: peleas de las próximas 2 semanas con foto, récord, edad, alcance y guardia. Picks de ganador, si va a decisión y método (KO o sumisión). Mientras ESPN no publica momios, el ganador se acerca al 50/50 y "va a decisión" parte del ~47% de UFC. Se califican solas con el resultado de ESPN.
+Tenis: queda para enero, cuando arranca la temporada ATP/WTA.
 Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pronóstico de ESPN, clima y árbitros.
 
 ## Pestañas
@@ -51,7 +54,14 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
   - Calculadora de **cobertura** (cuánto apostar al otro lado de tu última pata para asegurar ganancia).
 - **Historial**: si la página atina. Lo que recomendó cada día se califica solo; ves el porcentaje real contra lo que decía, por tipo, deporte y nivel de confianza, y cuánto habrías ganado con cada parlay armado.
 
-## Casa y Pago Anticipado (selector amarillo de arriba)
+## Menú de arriba
+
+- **Deportes**: fichas con el ícono de cada deporte y cuántos partidos tiene. En el cel solo va el ícono, y los de NCAA llevan "NCAA" chiquito. Si eliges un día, los deportes que no juegan ese día se ven apagados.
+- **Días**: tipo calendario, con el día de la semana chiquito y el número grande. Solo salen los días con partidos del deporte que elegiste.
+- **Casa** (botón amarillo con ficha): se despliega la lista de casas con el Pago Anticipado de cada una.
+- En el cel el encabezado se esconde al bajar y regresa en cuanto subes tantito.
+
+## Casa y Pago Anticipado (botón amarillo de arriba)
 
 - "A ganar" se paga si tu equipo llega a ir arriba por la ventaja, aunque luego pierda:
 

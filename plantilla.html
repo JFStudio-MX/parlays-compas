@@ -16,7 +16,7 @@
   --tx:#e9ecf3;--mu:#8a93a8;--mu2:#5f6880;
   --ok:#2fd27a;--okb:rgba(47,210,122,.14);--no:#ff5c6c;--nob:rgba(255,92,108,.12);
   --gold:#ffc94d;--goldb:rgba(255,201,77,.12);--ac:#6f9bff;--acb:rgba(111,155,255,.13);
-  --nba:#ff8a3d;--nfl:#7aa2ff;--nhl:#8fd8ff;--futbol:#3ddc84;--ncaab:#ffb070;--ncaaf:#b9a2ff;
+  --nba:#ff8a3d;--nfl:#7aa2ff;--nhl:#8fd8ff;--futbol:#3ddc84;--ncaab:#ffb070;--ncaaf:#b9a2ff;--ufc:#ff7a7a;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 Geist,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
@@ -37,14 +37,51 @@ h1{font-size:19px;margin:0;font-weight:700;letter-spacing:-.01em}
 .hoybtn:disabled{opacity:.45;cursor:default;filter:none}
 .actbtn{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:7px 12px;font-weight:600;cursor:pointer}
 .actbtn:disabled{opacity:.6;cursor:wait}
-.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+#act{display:inline-flex;align-items:center;gap:6px}
+.filtros{display:flex;gap:10px 16px;flex-wrap:wrap;margin-top:12px;align-items:stretch}
 .chip{border:1px solid var(--bd);background:var(--s1);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:13px;color:var(--mu)}
 .chip.on{background:var(--tx);color:#0b0d12;border-color:var(--tx);font-weight:600}
-.sep{width:1px;background:var(--bd);margin:2px 4px;align-self:stretch}
-.casa{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mu)}
-.casa select{background:var(--goldb);border:1px solid rgba(255,201,77,.4);color:var(--gold);border-radius:999px;padding:3px 10px;font-weight:600;cursor:pointer}
-.casa select option{background:var(--s1);color:var(--tx)}
-.casa small{color:var(--mu2)}
+/* deportes: fichas con ícono (color de cada deporte) */
+.frow{display:flex;gap:6px;flex-wrap:wrap}
+.frow.dias{padding-left:16px;border-left:1px solid var(--bd)}
+.dp,.dia{position:relative;display:grid;justify-items:center;align-content:center;border:1px solid var(--bd);background:var(--s1);border-radius:13px;cursor:pointer;color:var(--mu);font-variant-numeric:tabular-nums}
+.dp{--c:var(--gold);min-width:64px;padding:8px 10px 7px;gap:4px}
+.dp .ic{width:21px;height:21px;color:var(--c);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+.dp .nm{font-size:11.5px;font-weight:600;line-height:1}
+.dp .ncaa{display:none;font:800 8.5px/1 Geist,sans-serif;letter-spacing:.09em;color:var(--c);opacity:.9;margin-top:-1px}
+.dp .n,.dia .n{position:absolute;top:3px;right:5px;font-size:9.5px;font-weight:700;line-height:1;color:var(--mu2)}
+.dp:hover,.dia:hover{border-color:#3a4358;color:var(--tx)}
+.dp.on{color:var(--tx);border-color:color-mix(in srgb,var(--c) 65%,transparent);background:linear-gradient(165deg,color-mix(in srgb,var(--c) 30%,var(--s1)),color-mix(in srgb,var(--c) 7%,var(--s1)));box-shadow:0 8px 20px -8px color-mix(in srgb,var(--c) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.09)}
+.dp.on .ic{transform:scale(1.12)}
+.dp.on .n{color:var(--c)}
+.dp.vacio{opacity:.38}
+/* días: tipo calendario */
+.dia{min-width:50px;padding:6px 8px 7px;gap:2px}
+.dia .dd{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1}
+.dia .dn{font:700 20px/1 'Barlow Condensed',sans-serif;color:var(--tx)}
+.dia .ic{width:19px;height:19px}
+.dia.hoy:not(.on) .dd{color:var(--gold)}
+.dia.on{background:linear-gradient(160deg,#ffe08a,#ffc94d 60%,#f5b532);border-color:transparent;color:#5a4400;box-shadow:0 8px 22px -8px rgba(255,201,77,.65),inset 0 1px 0 rgba(255,255,255,.35)}
+.dia.on .dn{color:#1d1500}
+.dia.on .n{color:#7a5d00}
+/* casa: botón con ícono que despliega la lista */
+.top{position:relative}
+.casawrap{position:relative;display:flex}
+.casabtn{display:inline-flex;align-items:center;gap:6px;color:var(--gold);background:var(--goldb);border-color:rgba(255,201,77,.35)}
+.casabtn .car{width:14px;height:14px;opacity:.75;transition:transform .2s}
+.casabtn.on .car{transform:rotate(180deg)}
+.actbtn.casabtn.on{background:rgba(255,201,77,.2);border-color:rgba(255,201,77,.6);color:var(--gold)}
+.casapop{display:none;position:absolute;right:0;top:calc(100% + 8px);z-index:25;width:330px;background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:6px;box-shadow:0 22px 60px rgba(0,0,0,.65)}
+.casapop.on{display:grid;gap:2px;animation:caer .18s ease}
+@keyframes caer{from{opacity:0;transform:translateY(-6px) scale(.97)}}
+.casapop .tt{font-size:10.5px;color:var(--mu2);padding:7px 10px 5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.casapop button{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;background:none;border:0;padding:9px 10px;border-radius:11px;text-align:left;cursor:pointer}
+.casapop button b{font-weight:650}
+.casapop button small{grid-column:1;color:var(--mu);font-size:11.5px}
+.casapop button .ic{grid-column:2;grid-row:1/3;color:var(--gold)}
+.casapop button:hover{background:var(--s2)}
+.casapop button.on{background:var(--goldb)}
+.casapop button.on b{color:var(--gold)}
 .tabsrow{display:flex;align-items:flex-end;gap:8px;margin-top:10px}
 .tabs{display:flex;gap:2px;overflow-x:auto;flex:1}
 .tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;cursor:pointer;color:var(--mu);font-weight:600;white-space:nowrap}
@@ -62,7 +99,7 @@ h2.sec{font-size:16px;margin:26px 0 10px}
 .card.combo{border-color:rgba(111,155,255,.35);background:linear-gradient(180deg,rgba(111,155,255,.07),transparent 60%),var(--s1)}
 .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu);min-width:0}
 .dep{font-weight:700;font-size:11px;letter-spacing:.04em;padding:2px 7px;border-radius:6px;background:var(--s3);white-space:nowrap}
-.dep.nba{color:var(--nba)}.dep.nfl{color:var(--nfl)}.dep.nhl{color:var(--nhl)}.dep.futbol{color:var(--futbol)}.dep.ncaab{color:var(--ncaab)}.dep.ncaaf{color:var(--ncaaf)}
+.dep.nba{color:var(--nba)}.dep.nfl{color:var(--nfl)}.dep.nhl{color:var(--nhl)}.dep.futbol{color:var(--futbol)}.dep.ncaab{color:var(--ncaab)}.dep.ncaaf{color:var(--ncaaf)}.dep.ufc{color:#ff7a7a}
 .meta .jg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .add{margin-left:auto;flex:none;width:30px;height:30px;border-radius:9px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;font-size:18px;line-height:1;color:var(--tx)}
 .add:hover{background:var(--s3)}
@@ -358,6 +395,8 @@ table.t tr.mio td{background:var(--goldb)}
   .solocel{display:inline-flex;align-items:center;gap:4px}
   .actbtn.on{background:var(--ac);border-color:var(--ac);color:#06122e}
   .filtros{padding-bottom:10px}
+  header{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+  header.oculto{transform:translateY(-100%)}
   .layout{padding-bottom:calc(150px + env(safe-area-inset-bottom))}
   .nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:32;background:rgba(15,18,25,.94);backdrop-filter:blur(14px);border-top:1px solid var(--bd);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
   .nav button{background:none;border:0;color:var(--mu);display:grid;justify-items:center;gap:3px;font-size:11px;font-weight:600;padding:4px 0;cursor:pointer;position:relative}
@@ -382,10 +421,22 @@ table.t tr.mio td{background:var(--goldb)}
   .hoybtn{padding:7px 12px;font-size:13px}
   .hoybtn small,.actbtn .tl{display:none}
   .actbtn{padding:7px 10px}
-  .filtros{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:8px -12px 0;padding:0 12px 2px}
-  .filtros::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
-  .chip,.casa,.sep{flex:none}
-  .casa small{display:none}
+  .filtros{flex-direction:column;flex-wrap:nowrap;gap:7px;margin-top:10px}
+  .frow.deps{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+  .dp{min-width:0;height:44px;padding:0;border-radius:12px;gap:2px}
+  .dp .ic{width:22px;height:22px}
+  .dp .nm{display:none}
+  .dp .ncaa{display:block}
+  .dp.todo .nm{display:block;font-size:12.5px}
+  .dp.todo .ic{display:none}
+  .dp .n,.dia .n{top:3px;right:4px;font-size:9px}
+  .frow.dias{display:grid;grid-template-columns:repeat(var(--cols,7),minmax(0,1fr));gap:5px;padding:0;border:0}
+  .dia{min-width:0;padding:6px 0 6px;border-radius:12px}
+  .dia .dd{font-size:9.5px}
+  .dia .dn{font-size:19px}
+  .casawrap{position:static}
+  .casapop{width:auto;left:0;right:0;max-width:340px;margin-left:auto}
+  .casabtn{padding:7px 8px;gap:3px}
   .fichas{grid-template-columns:1fr 1fr;gap:8px}
   .ficha{grid-template-columns:1fr;padding:12px 8px 9px;gap:4px}
   .ficha .fe{grid-template-columns:34px 1fr auto;justify-items:start;align-items:center;text-align:left;gap:6px}
@@ -417,6 +468,7 @@ table.t tr.mio td{background:var(--goldb)}
 <header><div class="hwrap">
   <div class="top"><h1>Par<em>lays</em></h1><span class="fecha" id="fecha"></span>
     <div class="acciones"><button class="actbtn" id="act" style="display:none" title="Vuelve a bajar momios, lesiones y partidos"></button>
+      <div class="casawrap"><button class="actbtn casabtn" id="casabtn" aria-haspopup="true" aria-expanded="false" title="¿En qué casa apuestas?"></button><div class="casapop" id="casapop" role="menu"></div></div>
       <button class="actbtn solocel" id="filbtn2" aria-label="Filtrar"></button>
       <button class="hoybtn" id="hoy"></button></div></div>
   <div class="filtros" id="filtros"></div>
@@ -444,7 +496,8 @@ const pesos = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('es-MX', {m
 const pct = p => p == null ? '—' : (p * 100 >= 10 ? Math.round(p * 100) : (p * 100).toFixed(1)) + '%';
 const J = Object.fromEntries(D.juegos.map(j => [j.id, j]));
 const P = D.picks;
-const DEP = {nba:'NBA', nfl:'NFL', nhl:'NHL', futbol:'FÚT', ncaab:'NCAAB', ncaaf:'NCAAF'};
+const DEP = {nba:'NBA', nfl:'NFL', nhl:'NHL', futbol:'FÚT', ncaab:'NCAAB', ncaaf:'NCAAF', ufc:'UFC'};
+const ORDEN_DEP = ['nba', 'nfl', 'nhl', 'futbol', 'ufc', 'ncaab', 'ncaaf'];
 // íconos propios (trazo 1.8, se ven nítidos a cualquier tamaño)
 const ICONOS = {
   partidos: '<rect x="3" y="4" width="8" height="7" rx="2"/><rect x="13" y="4" width="8" height="7" rx="2"/><rect x="3" y="13" width="8" height="7" rx="2"/><rect x="13" y="13" width="8" height="7" rx="2"/>',
@@ -459,11 +512,16 @@ const ICONOS = {
   rayo: '<path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/>',
   actualizar: '<path d="M20 11a8 8 0 0 0-14.5-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.5 4.5L20 16M20 20v-4h-4"/>',
   atras: '<path d="M15 5 8 12l7 7"/>',
+  abajo: '<path d="m7 10 5 5 5-5"/>',
+  ok: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  cal: '<rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>',
+  casa: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3M6 6l2.1 2.1M15.9 15.9 18 18M6 18l2.1-2.1M15.9 8.1 18 6"/>',
   nba: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5v17M6.2 5.8a11 11 0 0 1 0 12.4M17.8 5.8a11 11 0 0 0 0 12.4"/>',
   ncaab: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5v17M6.2 5.8a11 11 0 0 1 0 12.4M17.8 5.8a11 11 0 0 0 0 12.4"/>',
   nfl: '<path d="M5 19c-2-2-1-8 3-12s10-5 12-3 1 8-3 12-10 5-12 3z"/><path d="m9.5 14.5 5-5M10.6 11.1l2.3 2.3M12.1 9.6l2.3 2.3M9.1 12.6l2.3 2.3"/>',
   ncaaf: '<path d="M5 19c-2-2-1-8 3-12s10-5 12-3 1 8-3 12-10 5-12 3z"/><path d="m9.5 14.5 5-5M10.6 11.1l2.3 2.3M12.1 9.6l2.3 2.3M9.1 12.6l2.3 2.3"/>',
   nhl: '<path d="M14 3 8.5 16.5a2 2 0 0 1-1.9 1.3H3.5V20h3.6a4 4 0 0 0 3.7-2.6L16.5 3"/><ellipse cx="17.5" cy="18.5" rx="3.5" ry="1.5"/>',
+  ufc: '<path d="M7 11V7.5a4 4 0 0 1 8 0V8h1.5A2.5 2.5 0 0 1 19 10.5V14a6 6 0 0 1-6 6h-1a5 5 0 0 1-5-5z"/><path d="M7 13.5h8.5M11 8.5v5"/>',
   futbol: '<circle cx="12" cy="12" r="8.5"/><path d="m12 7.6 3.7 2.7-1.4 4.4H9.7l-1.4-4.4zM12 7.6V3.5M15.7 10.3l3.9-1.3M14.3 14.7l2.4 3.5M9.7 14.7l-2.4 3.5M8.3 10.3 4.4 9"/>',
 };
 const ic = (k, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONOS[k] || ''}</svg>`;
@@ -499,7 +557,7 @@ const fechaCorta = iso => { const t = new Date(iso); return `${DIAS_JS[t.getDay(
 
 // ---------- estado (lo que eliges se queda guardado en el navegador)
 const guardado = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
-let st = {dep:'todos', dia:'todos', tab: guardado('parlay_tab', 'partidos'), filtro:false, juego:null, mas:false};
+let st = {dep:'todos', dia:'todos', tab: guardado('parlay_tab', 'partidos'), filtro:false, juego:null, mas:false, casa:false};
 let vistaPrevia = '', ultimoAgregado = null;
 let slip = guardado('parlay_slip_v2', []);
 let apuesta = +(localStorage.getItem('parlay_apuesta') || 50);
@@ -663,7 +721,7 @@ function porQue(p){
 }
 
 // ---------- piezas visuales
-const esFut = j => j.tipo === 'futbol';
+const esFut = j => j.tipo === 'futbol' || j.tipo === 'ufc';  // "A vs B" (local primero)
 // fútbol: Local vs Visita · el resto: Visita @ Local (como en la casa)
 function nomJuego(j){ return esFut(j) ? `${j.L.corto} vs ${j.V.corto}` : `${j.V.corto} @ ${j.L.corto}`; }
 function cuando(j, largo){
@@ -674,8 +732,12 @@ function cdn(url, w, h){
   const m = url && url.match(/^https:\/\/a\.espncdn\.com(\/i\/.+)$/);
   return m ? `https://a.espncdn.com/combiner/i?img=${m[1]}&w=${w}&h=${h}` : (url || '');
 }
+// silueta para cuando ESPN no tiene foto del peleador
+const SILUETA = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#222838"/><circle cx="20" cy="15" r="7" fill="#3a4358"/><path d="M6 40c1-9 7-14 14-14s13 5 14 14z" fill="#3a4358"/></svg>');
 function logo(url, s = 18, cls = 'lg'){
   if (!url) return '';
+  if (url.includes('/headshots/'))  // peleadores: foto en círculo
+    return `<img class="${cls}" loading="lazy" src="${cdn(url, Math.round(s * 2.75), s * 2)}" style="object-fit:cover;object-position:center top;border-radius:50%;background:#222838" onerror="this.onerror=null;this.src=SILUETA" alt="">`;
   const dark = url.replace('/500/', '/500-dark/');  // versión para fondo oscuro
   return `<img class="${cls}" loading="lazy" src="${cdn(dark, s * 2, s * 2)}" onerror="this.onerror=null;this.src='${cdn(url, s * 2, s * 2)}'" alt="">`;
 }
@@ -691,6 +753,7 @@ function avatar(p, s = 42){
     const fb = cdn((eq.logo || '').replace('/500/', '/500-dark/'), s * 2, s * 2);
     return `<span class="av" ${sty}><img loading="lazy" src="${cdn(p.foto, Math.round(s * 2.75), s * 2)}" onerror="this.onerror=null;this.className='fb';this.src='${fb}'" alt=""></span>`;
   }
+  if (p.lado && (j[p.lado].logo || '').includes('/headshots/')) return `<span class="av" ${sty}>${logo(j[p.lado].logo, s, '')}</span>`;
   if (p.lado) return `<span class="av lgav" ${sty}>${logo(j[p.lado].logo, Math.round(s * .7), '')}</span>`;
   const a = esFut(j) ? j.L : j.V, b = esFut(j) ? j.V : j.L;
   return `<span class="av duo" ${sty}>${logo(a.logo, Math.round(s * .55), '')}${logo(b.logo, Math.round(s * .55), '')}</span>`;
@@ -832,11 +895,11 @@ function vista(){
     const js = vivos().filter(j => (st.dep === 'todos' || j.tipo === st.dep) && (st.dia === 'todos' || j.dia === st.dia)
       && (!FILT.ligas.length || FILT.ligas.includes(j.liga_nombre))
       && (!FILT.q || j.picks.some(i => pasaFILT(P[i])) || sinAcentos(j.L.nombre + ' ' + j.V.nombre).includes(sinAcentos(FILT.q))));
-    const orden = ['nfl', 'nba', 'nhl', 'futbol', 'ncaaf', 'ncaab'];
+    const orden = ['nfl', 'nba', 'nhl', 'futbol', 'ufc', 'ncaaf', 'ncaab'];
     const grupos = {};
     for (const j of js) (grupos[j.liga_nombre] = grupos[j.liga_nombre] || []).push(j);
     const claves = Object.keys(grupos).sort((a, b) => (orden.indexOf(grupos[a][0].tipo) - orden.indexOf(grupos[b][0].tipo)) || (grupos[a][0].t - grupos[b][0].t));
-    m.innerHTML = filtroHTML() + (js.length ? claves.map(k => `<div class="grupo">${ic(grupos[k][0].tipo)}<h2>${esc(k)}</h2><span>${grupos[k].length} partido${grupos[k].length > 1 ? 's' : ''}</span></div>
+    m.innerHTML = filtroHTML() + (js.length ? claves.map(k => `<div class="grupo">${ic(grupos[k][0].tipo)}<h2>${esc(k)}</h2><span>${grupos[k].length} ${grupos[k][0].tipo === 'ufc' ? 'pelea' : 'partido'}${grupos[k].length > 1 ? 's' : ''}</span></div>
       <div class="fichas">${grupos[k].map((j, i) => fichaHTML(j, i)).join('')}</div>`).join('') : `<div class="vacio">Nada con estos filtros.</div>`);
   } else if (st.tab === 'apuestas'){
     m.innerHTML = apuestasHTML();
@@ -868,6 +931,8 @@ function contextoHTML(j){
     x.push(`${j.clima_alerta ? '<b class="w">' : ''}Clima: ${esc(j.clima_txt || '')}${c.temp_c != null ? ' ' + c.temp_c + '°C' : ''}${c.rafaga_kmh != null ? ' · ráfagas ' + c.rafaga_kmh + ' km/h' : ''}${c.lluvia != null ? ' · lluvia ' + Math.round(c.lluvia) + '%' : ''}${j.clima_alerta ? '</b>' : ''}`);
   } else if (j.indoor && j.base === 'nfl') x.push('Estadio techado');
   if (j.arbitro_txt) x.push(`Árbitro ${esc(j.arbitro_txt)}`);
+  if (j.division) x.push(`${esc(j.division)}${j.estelar ? ' · pelea estelar' : ''}`);
+  for (const t of j.peleadores || []) x.push(esc(t));
   return x.length ? `<div class="ctx">${x.map(t => t.startsWith('<b class="w">') ? `<span class="w">${t.replace('<b class="w">', '').replace('</b>', '')}</span>` : `<span>${t}</span>`).join('')}</div>` : '';
 }
 
@@ -1190,8 +1255,10 @@ async function imagenParlay(){
   const urlDe = ({p, j}) => {
     if (!p) return [];
     if (p.clase === 'jugador') return [cdn(p.foto, 264, 192), cdn((j[p.lado] || {}).logo || '', 176, 176)];
-    if (p.lado) return [cdn((j[p.lado].logo || '').replace('/500/', '/500-dark/'), 176, 176)];
+    const foto = u => (u || '').includes('/headshots/');
+    if (p.lado) { const u = j[p.lado].logo || ''; return [foto(u) ? cdn(u, 264, 192) : cdn(u.replace('/500/', '/500-dark/'), 176, 176)]; }
     const a = esFut(j) ? j.L : j.V, b = esFut(j) ? j.V : j.L;
+    if (foto(a.logo)) return [cdn(a.logo, 264, 192)];
     return [cdn((a.logo || '').replace('/500/', '/500-dark/'), 120, 120), cdn((b.logo || '').replace('/500/', '/500-dark/'), 120, 120)];
   };
   const imgs = await Promise.all(legs.map(async x => Promise.all(urlDe(x).map(cargarImg))));
@@ -1211,7 +1278,8 @@ async function imagenParlay(){
     const cx = x + 26 + 46, cy = y + h / 2, rA = 46;
     g.save(); g.beginPath(); g.arc(cx, cy, rA, 0, Math.PI * 2); g.fillStyle = '#222838'; g.fill(); g.clip();
     const [a, b] = imgs[i];
-    if (p && p.clase === 'jugador' && a){ const s = rA * 2 / a.height; g.drawImage(a, cx - a.width * s / 2, cy - rA, a.width * s, rA * 2); }
+    const esFoto = im => im && im.width !== im.height;  // fotos de jugadores/peleadores (no cuadradas)
+    if (a && esFoto(a)){ const s = rA * 2 / a.height; g.drawImage(a, cx - a.width * s / 2, cy - rA, a.width * s, rA * 2); }
     else if (p && p.clase === 'jugador' && b){ g.drawImage(b, cx - rA * .7, cy - rA * .7, rA * 1.4, rA * 1.4); }
     else if (a && b){ g.drawImage(a, cx - rA * .86, cy - rA * .86, rA, rA); g.drawImage(b, cx - rA * .14, cy - rA * .14, rA, rA); }
     else if (a){ g.drawImage(a, cx - rA * .7, cy - rA * .7, rA * 1.4, rA * 1.4); }
@@ -1332,18 +1400,41 @@ function render(){
   const vv = vivos();
   $('#fecha').textContent = `Son las ${horaAhora()} · ${vv.length} partidos por jugar · datos de ${D.titulo}${PUBLICO ? ' (se actualiza cada 2 h, de 8 am a medianoche)' : ''}`;
   if (PUBLICO && ['stats', 'apuestas'].includes(st.tab)) st.tab = 'candados';
-  const deps = ['todos', ...['nba', 'nfl', 'nhl', 'futbol', 'ncaab', 'ncaaf'].filter(t => vv.some(j => j.tipo === t))];
-  const dias = ['todos', ...[...new Set(vv.map(j => j.dia))]];
-  if (!dias.includes(st.dia) && st.dia !== 'Hoy') st.dia = 'todos';
+  const deps = ['todos', ...ORDEN_DEP.filter(t => vv.some(j => j.tipo === t))];
   if (!deps.includes(st.dep)) st.dep = 'todos';
+  // los días salen del deporte elegido (así no aparecen días vacíos)
+  const infoDia = {};
+  vv.filter(j => st.dep === 'todos' || j.tipo === st.dep).sort((a, b) => a.t - b.t)
+    .forEach(j => { (infoDia[j.dia] ||= {t: j.t, n: 0}).n++; });
+  const dias = ['todos', ...Object.keys(infoDia)];
+  if (!dias.includes(st.dia) && st.dia !== 'Hoy') st.dia = 'todos';
   const nHoy = vv.filter(j => j.dia === 'Hoy').length;
   $('#hoy').innerHTML = `${ic('rayo')}<span>Parlay de hoy</span><small>${nHoy ? nHoy + ' partidos' : 'ya no hay'}</small>`;
   $('#hoy').disabled = !nHoy;
   if (!$('#act').innerHTML) $('#act').innerHTML = `${ic('actualizar')}<span class="tl">Actualizar</span>`;
   PLS = construirParlays();
-  $('#filtros').innerHTML = deps.map(t => `<button class="chip ${st.dep === t ? 'on' : ''}" data-dep="${t}">${t === 'todos' ? 'Todos' : ic(t) + D.deportes[t]}</button>`).join('')
-    + '<span class="sep"></span>' + dias.map(t => `<button class="chip ${st.dia === t ? 'on' : ''}" data-dia="${t}">${t === 'todos' ? 'Todos los días' : t}</button>`).join('')
-    + `<span class="sep"></span><span class="casa">Casa <select id="casa">${[...CASAS, 'Sin PA'].map(c => `<option ${c === CASA_SEL ? 'selected' : ''}>${c}</option>`).join('')}</select><small>${esc(textoPA(CASA_SEL))}</small></span>`;
+  // deportes: fichas con ícono (en cel solo el ícono; los de NCAA llevan "NCAA" chiquito)
+  const nDep = t => vv.filter(j => (t === 'todos' || j.tipo === t) && (st.dia === 'todos' || j.dia === st.dia)).length;
+  const fichaDep = t => {
+    const n = nDep(t), todo = t === 'todos', nom = todo ? 'Todos los deportes' : D.deportes[t];
+    return `<button class="dp ${todo ? 'todo' : ''} ${st.dep === t ? 'on' : ''} ${n ? '' : 'vacio'}" data-dep="${t}" style="--c:var(--${todo ? 'gold' : t})" title="${esc(nom)} · ${n} partidos" aria-label="${esc(nom)}" aria-pressed="${st.dep === t}">`
+      + `${n && !todo ? `<span class="n">${n}</span>` : ''}${ic(todo ? 'partidos' : t)}${t.startsWith('ncaa') ? '<small class="ncaa">NCAA</small>' : ''}<span class="nm">${esc(todo ? 'Todos' : D.deportes[t])}</span></button>`;
+  };
+  // días: tipo calendario (día de la semana chiquito y el número grande)
+  const fichaDia = d => {
+    if (d === 'todos') return `<button class="dia ${st.dia === 'todos' ? 'on' : ''}" data-dia="todos" title="Todos los días" aria-pressed="${st.dia === 'todos'}"><span class="dd">Todos</span>${ic('cal')}</button>`;
+    const x = infoDia[d], dd = d === 'Hoy' ? 'Hoy' : d === 'Mañana' ? 'Mañ' : DIAS_JS[x.t.getDay()];
+    return `<button class="dia ${d === 'Hoy' ? 'hoy' : ''} ${st.dia === d ? 'on' : ''}" data-dia="${esc(d)}" title="${esc(fechaCorta(x.t))} · ${x.n} partidos" aria-pressed="${st.dia === d}"><span class="dd">${dd}</span><span class="dn">${x.t.getDate()}</span></button>`;
+  };
+  $('#filtros').innerHTML = `<div class="frow deps" role="group" aria-label="Deporte">${deps.map(fichaDep).join('')}</div>`
+    + `<div class="frow dias" role="group" aria-label="Día" style="--cols:${dias.length <= 8 ? Math.max(dias.length, 6) : Math.ceil(dias.length / 2)}">${dias.map(fichaDia).join('')}</div>`;
+  // casa: botón con ícono que despliega la lista (cambia el Pago Anticipado)
+  $('#casabtn').innerHTML = `${ic('casa')}<span class="tl">${esc(CASA_SEL)}</span>${ic('abajo', 'car')}`;
+  $('#casabtn').classList.toggle('on', st.casa);
+  $('#casabtn').setAttribute('aria-expanded', st.casa);
+  $('#casapop').classList.toggle('on', st.casa);
+  $('#casapop').innerHTML = '<div class="tt">¿Dónde apuestas?</div>' + [...CASAS, 'Sin PA'].map(c =>
+    `<button role="menuitemradio" aria-checked="${c === CASA_SEL}" class="${c === CASA_SEL ? 'on' : ''}" data-casa="${esc(c)}"><b>${esc(c)}</b><small>${esc(textoPA(c))}</small>${c === CASA_SEL ? ic('ok') : ''}</button>`).join('');
   const cnt = k => D[k].filter(i => pasaFiltro(P[i]) && (k !== 'candados' || momioSug(P[i]) >= MOMIO_MIN_CANDADO)).length;
   const pend = APS.filter(a => !(a.resultado || (EST_AP[a.id] || {}).estado) || (a.resultado || (EST_AP[a.id] || {}).estado) === 'pendiente').length;
   const TABS = [['partidos', 'Partidos', vv.filter(j => (st.dep === 'todos' || j.tipo === st.dep) && (st.dia === 'todos' || j.dia === st.dia)).length],
@@ -1387,11 +1478,16 @@ function render(){
 }
 
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-add],[data-combo],[data-dep],[data-dia],[data-tab],[data-toggle],[data-quitar],[data-cargar],[data-res],[data-borrar],[data-cubrir],[data-excluir],[data-restablecer],[data-fset],[data-fmulti],[data-flimpiar],[data-ejemplo],[data-trslug],[data-monto],#copiar,#vaciar,#fab,#hoy,#lometi,#r-ok,#r-no,#filbtn,#completar,#act,#ia-ir,#ia-borrar,#tr-ir,#imagen,#velo,[data-juego],[data-volver],[data-mas],#filbtn2');
+  const t = e.target.closest('[data-add],[data-combo],[data-dep],[data-dia],[data-tab],[data-toggle],[data-quitar],[data-cargar],[data-res],[data-borrar],[data-cubrir],[data-excluir],[data-restablecer],[data-fset],[data-fmulti],[data-flimpiar],[data-ejemplo],[data-trslug],[data-monto],#copiar,#vaciar,#fab,#hoy,#lometi,#r-ok,#r-no,#filbtn,#completar,#act,#ia-ir,#ia-borrar,#tr-ir,#imagen,#velo,[data-juego],[data-volver],[data-mas],#filbtn2,#casabtn,[data-casa]');
   if (!t) return;
   if (t.dataset.juego) { st.tab = 'partidos'; st.juego = t.dataset.juego; st.mas = false; render(); scrollTo(0, 0); return; }
   if (t.dataset.volver) { st.juego = null; render(); return; }
   if (t.dataset.mas) { st.mas = !st.mas; render(); return; }
+  if (t.id === 'casabtn') { st.casa = !st.casa; render(); return; }
+  if (t.dataset.casa) {
+    CASA_SEL = t.dataset.casa; st.casa = false; localStorage.setItem('parlay_casa', JSON.stringify(CASA_SEL));
+    slip.forEach(l => { if (P[l.id] && P[l.id].momio == null) l.momio = momioSug(P[l.id]); }); guardar(); render(); return;
+  }
   if (t.id === 'filbtn2') { st.filtro = !st.filtro; if (st.filtro) scrollTo(0, 0); render(); return; }
   if (t.id === 'imagen') { compartirImagen(t); return; }
   if (t.id === 'velo') { hoja(false); return; }
@@ -1489,9 +1585,6 @@ document.addEventListener('change', e => {
     guardar(); render();
   } else if (t.id === 'apuesta') {
     apuesta = Math.max(1, parseFloat(String(t.value).replace(/[^\d.]/g, '')) || 50); guardar(); render();
-  } else if (t.id === 'casa') {
-    CASA_SEL = t.value; localStorage.setItem('parlay_casa', JSON.stringify(CASA_SEL));
-    slip.forEach(l => { if (P[l.id] && P[l.id].momio == null) l.momio = momioSug(P[l.id]); }); guardar(); render();
   } else if (t.dataset.f === 'momMin' || t.dataset.f === 'momMax') {
     FILT[t.dataset.f] = t.value === '' ? '' : String(parseInt(t.value, 10) || ''); guardarFiltros(); render();
   } else if (t.dataset.fchk) {
@@ -1505,8 +1598,20 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('click', e => {
   if (innerWidth <= 980 && $('#slip').classList.contains('abierta') && !e.target.closest('#slip,#fab,[data-add],[data-cargar],[data-combo],.visor')) hoja(false);
-  if (st.mas && !e.target.closest('#nav,#mas')) { st.mas = false; $('#mas').classList.remove('on'); }
+  // composedPath: el botón que tocaste ya pudo ser reemplazado por render(), así que se revisa la ruta original del clic
+  const dentro = sel => e.composedPath().some(n => n.matches && n.matches(sel));
+  if (st.mas && !dentro('#nav,#mas')) { st.mas = false; $('#mas').classList.remove('on'); }
+  if (st.casa && !dentro('.casawrap')) { st.casa = false; render(); }
 });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && st.casa) { st.casa = false; render(); $('#casabtn').focus(); } });
+// cel: el encabezado se esconde al bajar y regresa en cuanto subes tantito
+let ultY = scrollY;
+addEventListener('scroll', () => {
+  const y = scrollY, dy = y - ultY;
+  if (Math.abs(dy) < 8) return;
+  document.querySelector('header').classList.toggle('oculto', innerWidth <= 980 && dy > 0 && y > 160 && !st.casa);
+  ultY = y;
+}, {passive: true});
 render();
 // cada minuto revisa la hora: si empezó un partido, lo quita y rearma los parlays
 setInterval(() => {

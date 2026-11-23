@@ -65,6 +65,12 @@ def _calificar_regla(r, ahora, recs):
     """Estado de una apuesta: pendiente / gano / perdio / anulada / sin_dato (+ si pegó el Pago Anticipado)."""
     if a_mx(r["fecha"]) > ahora - timedelta(hours=2, minutes=30):
         return "pendiente", None, False
+    if r["regla"].get("k") == "mma":  # UFC: el resultado sale del perfil del peleador
+        import ufc
+        ok, v = ufc.evaluar(r["regla"])
+        if ok == "pendiente":
+            return ("sin_dato" if a_mx(r["fecha"]) < ahora - timedelta(days=4) else "pendiente"), None, False
+        return ("anulada" if ok is None else ("gano" if ok else "perdio")), v, False
     k = (r["liga"], r["juego"])
     if k not in recs:
         recs[k] = cargar_partido(r["liga"], r["sport"], r["base"], r["juego"])
