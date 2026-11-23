@@ -1,13 +1,11 @@
 # Actualiza la versión para los compas cada 15 minutos, de 8 am a medianoche (hora del centro de México, UTC-6).
 # Corre el programa en GitHub, cifra la página con la clave del grupo (secret CLAVE_PARLAYS)
-# y sube publico/index.html; Vercel la publica sola.
+# y sube publico/ a la rama "sitio" (una sola copia); Vercel publica esa rama.
 name: Actualizar parlays
 
 on:
-  schedule:
-    # Minutos 7/22/37/52 (no en punto: GitHub atrasa o se salta las corridas a la hora exacta)
-    - cron: "7,22,37,52 14-23 * * *"   # 8:07 am a 5:52 pm en México
-    - cron: "7,22,37,52 0-5 * * *"     # 6:07 pm a 11:52 pm en México
+  # El horario lo pone cron-job.org (cada 15 min, 8:07 am a 11:52 pm, America/Mexico_City):
+  # hace POST a la API de GitHub para lanzar este workflow. El "schedule" de GitHub no era confiable.
   workflow_dispatch:
 
 permissions:
@@ -56,11 +54,18 @@ jobs:
             datos
           key: parlays-${{ github.run_id }}
 
-      - name: Publicar
+      # La página (1.6 MB cifrada) va a la rama "sitio" con UNA sola copia que se reemplaza cada vez
+      # (push --force), para que el repo no crezca ~100 MB al día. Vercel publica la rama "sitio".
+      - name: Publicar en la rama sitio
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          SITIO=$(mktemp -d)
+          cp -r publico vercel.json "$SITIO"/
+          cd "$SITIO"
+          git init -q -b sitio
           git config user.name "parlays-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add publico/index.html
-          git commit -m "Datos $(TZ=America/Mexico_City date '+%d/%m %H:%M')" || exit 0
-          git pull --rebase -X theirs
-          git push
+          git add -A
+          git commit -q -m "Datos $(TZ=America/Mexico_City date '+%d/%m %H:%M')"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" sitio

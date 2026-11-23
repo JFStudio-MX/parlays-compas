@@ -97,7 +97,7 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
 ## Versión para los compas (móvil y privada)
 
 - La misma página, sin tus apuestas ni Stats/IA, con los datos **cifrados** (AES-256): sin la clave del grupo solo se ve un candado. No aparece en Google.
-- Se arma sola en GitHub (repo público `JFStudio-MX/parlays-compas`, archivo `.github/workflows/actualizar.yml`) cada 15 minutos de 8 am a medianoche, aunque tu compu esté apagada, y Vercel la publica (`vercel.json` solo publica la carpeta `publico/`, nunca el código).
+- Se arma sola en GitHub (repo público `JFStudio-MX/parlays-compas`, archivo `.github/workflows/actualizar.yml`, lanzado por cron-job.org) cada 15 minutos de 8 am a medianoche, aunque tu compu esté apagada, y la sube a la rama `sitio` (una sola copia que se reemplaza, para que el repo no crezca). Vercel publica la rama `sitio` (`vercel.json` solo publica la carpeta `publico/`, nunca el código).
 - **Cambiar la clave del grupo:** en una terminal, `gh secret set CLAVE_PARLAYS -R JFStudio-MX/parlays-compas` y escribe la nueva (mínimo 6 caracteres). Pásala a tus compas; la próxima actualización ya usa la nueva y les pide entrar otra vez.
 - **Actualizar ya mismo:** `gh workflow run actualizar.yml -R JFStudio-MX/parlays-compas` (o en GitHub → Actions → Actualizar parlays → Run workflow).
 - **Si cambias el código** (o Claude lo cambia): `git pull` y luego `git push` en esta carpeta; la siguiente actualización ya sale con los cambios.
