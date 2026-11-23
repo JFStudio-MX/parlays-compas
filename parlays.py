@@ -100,6 +100,7 @@ def buscar_partidos(ligas, dias, ahora, cfg):
                         "corto": t.get("shortDisplayName") or t.get("name") or t.get("displayName"),
                         "nombre": t.get("displayName"),
                         "logo": t.get("logo") or ((t.get("logos") or [{}])[0].get("href")),
+                        "color": t.get("color"), "color2": t.get("alternateColor"),
                         "rank": rank(c) if rank(c) <= 25 else None}
             venue = comp.get("venue") or {}
             res.append({

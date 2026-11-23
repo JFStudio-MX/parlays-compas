@@ -84,6 +84,15 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
 | `odds_api_key` | Clave gratis de https://the-odds-api.com (500 créditos al mes) para **momios reales de jugadores**. `odds_api_max_creditos` limita lo que gasta cada corrida (40 por defecto). |
 | `telegram_token` / `telegram_chat_id` | Para que te lleguen los parlays de hoy por Telegram con `python parlays.py --avisar` (cómo sacarlos: ver `avisos.py`). |
 
+## Versión para los compas (móvil y privada)
+
+- La misma página, sin tus apuestas ni Stats/IA, con los datos **cifrados** (AES-256): sin la clave del grupo solo se ve un candado. No aparece en Google.
+- Se arma sola en GitHub (repo privado `JFStudio-MX/parlays-compas`, archivo `.github/workflows/actualizar.yml`) cada 2 horas de 8 am a medianoche, aunque tu compu esté apagada, y Vercel la publica (`vercel.json` solo publica la carpeta `publico/`, nunca el código).
+- **Cambiar la clave del grupo:** en una terminal, `gh secret set CLAVE_PARLAYS -R JFStudio-MX/parlays-compas` y escribe la nueva (mínimo 6 caracteres). Pásala a tus compas; la próxima actualización ya usa la nueva y les pide entrar otra vez.
+- **Actualizar ya mismo:** `gh workflow run actualizar.yml -R JFStudio-MX/parlays-compas` (o en GitHub → Actions → Actualizar parlays → Run workflow).
+- **Si cambias el código** (o Claude lo cambia): `git pull` y luego `git push` en esta carpeta; la siguiente actualización ya sale con los cambios.
+- Cada compa: abre la liga, pone la clave (se queda guardada en su cel), arma su parlay y le da "Copiar para WhatsApp". Tip: en el cel, "Agregar a pantalla de inicio" y queda como app.
+
 ## Pasarle apuestas a Claude por el chat
 
 Mándale el parlay como lo metiste (casa, monto, momio total y cada pata). Lo agrega a `datos/apuestas.json` y se califica solo.
@@ -102,6 +111,7 @@ Mándale el parlay como lo metiste (casa, monto, momio total y cada pata). Lo ag
 | `servidor.py` | Servidor local: guarda apuestas, Stats/IA y el botón Actualizar. |
 | `estadisticas.py` | TeamRankings (respeta 10 s entre consultas). |
 | `ia.py` | Pregúntale a la IA (Claude). |
+| `publicar.py` | Versión cifrada para los compas (`python parlays.py --publico`). |
 | `plantilla.html` | La página. |
 
 Carpetas:
