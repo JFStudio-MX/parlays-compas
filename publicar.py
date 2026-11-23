@@ -83,6 +83,11 @@ def publicar(datos, plantilla):
                       + '<script type="text/plain" id="app">\nconst D = window.__D;', plantilla, count=1)
     if n != 1:
         raise SystemExit("No encontré dónde poner los datos en plantilla.html.")
+    # para que se pueda instalar como app en el cel (manifest, íconos y service worker viven en publico/)
+    html = html.replace("<title>", '<link rel="manifest" href="/manifest.webmanifest">'
+                        '<link rel="apple-touch-icon" href="/apple-touch-icon.png">'
+                        '<link rel="icon" href="/icono-192.png">'
+                        "<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script><title>", 1)
     SALIDA_PUBLICA.parent.mkdir(exist_ok=True)
     SALIDA_PUBLICA.write_text(html, "utf-8")
     return SALIDA_PUBLICA
