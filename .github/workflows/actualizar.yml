@@ -61,5 +61,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add publico/index.html
           git commit -m "Datos $(TZ=America/Mexico_City date '+%d/%m %H:%M')" || exit 0
-          git pull --rebase
+          git pull --rebase -X theirs
           git push
