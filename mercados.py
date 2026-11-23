@@ -65,7 +65,7 @@ def evaluar_equipo(j, hL, hV, fam, texto, vL, okL, vV, okV, orden=0, momio=None,
     )
 
 
-LADO_FAM = {"ml_L": "L", "dc_L": "L", "hcp_L": "L", "gL_o": "L", "corL_o": "L", "spa_L": "L",
+LADO_FAM = {"h1_L": "L", "h1_V": "V", "ml_L": "L", "dc_L": "L", "hcp_L": "L", "gL_o": "L", "corL_o": "L", "spa_L": "L",
             "ml_V": "V", "dc_V": "V", "hcp_V": "V", "gV_o": "V", "corV_o": "V", "spa_V": "V"}
 
 
@@ -78,6 +78,7 @@ def regla_equipo(fam, orden, j):
         "spa_L": ("mlf", L, ">=", 1), "spa_V": ("mlf", V, ">=", 1),
         "hcp_L": ("margen", L, ">", orden), "hcp_V": ("margen", V, ">", orden),
         "tot_o": ("total", None, ">", orden), "tot_u": ("total", None, "<", -orden),
+        "h1_L": ("m1mg", L, ">", orden), "h1_V": ("m1mg", V, ">", orden),
         "m1_o": ("m1", None, ">", orden), "m1_u": ("m1", None, "<", -orden),
         "btts_si": ("btts", None, "==", 1), "btts_no": ("btts", None, "==", 0),
         "gL_o": ("pf", L, ">", orden), "gV_o": ("pf", V, ">", orden),
@@ -208,6 +209,32 @@ def mercados_equipo(j, hL, hV):
             lambda f, x=x: f["m1"] > x, orden=x, sub=nom.capitalize())
         add("m1_u", f"{nom}: menos de {x:g} {unidad}", m1, lambda f, x=x: f["m1"] < x, m1,
             lambda f, x=x: f["m1"] < x, orden=-x, sub=nom.capitalize())
+
+    # ---- hándicap de la 1a mitad / 1er periodo / 1er tiempo (con la ventaja al descanso)
+    h1 = lambda f: f.get("m1mg")
+    s = m.get("sp_L")
+    if t in ("nba", "nfl"):
+        if s is not None:
+            b = media5(s / 2) if s >= 0 else -media5(-s / 2)  # la línea de mitad suele ser la mitad del spread
+            alts = [0, 3, 6] if t == "nba" else [0, 3, 7]
+            h1lin = {"L": [b + a for a in alts], "V": [-b + a for a in alts]}
+        else:
+            h1lin = {"L": [0.5, 3.5], "V": [0.5, 3.5]}
+    else:  # NHL y fútbol: gana el periodo (-0.5), no lo pierde (+0.5), no pierde por 2 (+1.5)
+        h1lin = {"L": [-0.5, 0.5, 1.5], "V": [-0.5, 0.5, 1.5]}
+    txt_h1 = {-0.5: "gana el {n}", 0.5: "no pierde el {n}", 1.5: "+1.5 en el {n}"}
+    for lado, nomb in (("L", L), ("V", V)):
+        for x in h1lin[lado]:
+            if t in ("nhl", "futbol"):
+                texto = f"{nomb} {txt_h1[x].format(n=nom)}"
+            else:
+                texto = f"{nomb} {fmt_linea(x)} ({nom})"
+            if lado == "L":
+                add("h1_L", texto, h1, lambda f, x=x: f["m1mg"] + x > 0, h1, lambda f, x=x: -f["m1mg"] + x > 0,
+                    orden=-x, sub=f"Hándicap {nom}")
+            else:
+                add("h1_V", texto, h1, lambda f, x=x: -f["m1mg"] + x > 0, h1, lambda f, x=x: f["m1mg"] + x > 0,
+                    orden=-x, sub=f"Hándicap {nom}")
 
     if t == "futbol":
         ambos = lambda f: f"{int(f['pf'])}-{int(f['pa'])}"

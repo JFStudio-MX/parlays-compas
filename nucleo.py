@@ -486,10 +486,14 @@ def rasgos(rec, tid, base):
     pf, pa = me["pts"], op["pts"]
     f = {"fecha": rec["fecha"], "rival": op["abbr"], "local": me["local"], "pf": pf, "pa": pa,
          "total": pf + pa, "margen": pf - pa, "mlf": me.get("ml"), "mlc": op.get("ml")}
+    # primera mitad: 2 cuartos en NBA/NFL; NCAA básquet se juega en mitades (2 periodos, 3+ con prórroga)
     k = 2 if base in ("nba", "nfl") else 1
+    if base == "nba" and len(me["per"]) <= 3:
+        k = 1
     if len(me["per"]) >= k and len(op["per"]) >= k and None not in me["per"][:k] + op["per"][:k]:
         f["m1f"], f["m1c"] = sum(me["per"][:k]), sum(op["per"][:k])
         f["m1"] = f["m1f"] + f["m1c"]
+        f["m1mg"] = f["m1f"] - f["m1c"]  # ventaja al medio tiempo / 1er periodo
     if base == "futbol":
         for c in ("cor", "tar", "tap"):
             a, b = me["st"].get(c), op["st"].get(c)
