@@ -1,12 +1,13 @@
-# Actualiza la versión para los compas cada 2 horas, de 8 am a medianoche (hora del centro de México, UTC-6).
+# Actualiza la versión para los compas cada 15 minutos, de 8 am a medianoche (hora del centro de México, UTC-6).
 # Corre el programa en GitHub, cifra la página con la clave del grupo (secret CLAVE_PARLAYS)
 # y sube publico/index.html; Vercel la publica sola.
 name: Actualizar parlays
 
 on:
   schedule:
-    - cron: "0 14-22/2 * * *"   # 8, 10, 12, 14, 16 h en México
-    - cron: "0 0-6/2 * * *"     # 18, 20, 22, 0 h en México
+    # Minutos 7/22/37/52 (no en punto: GitHub atrasa o se salta las corridas a la hora exacta)
+    - cron: "7,22,37,52 14-23 * * *"   # 8:07 am a 5:52 pm en México
+    - cron: "7,22,37,52 0-5 * * *"     # 6:07 pm a 11:52 pm en México
   workflow_dispatch:
 
 permissions:
