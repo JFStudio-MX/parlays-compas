@@ -35,6 +35,7 @@ jobs:
           path: |
             cache/partidos
             cache/tr
+            cache/fd
             datos
           key: parlays-${{ github.run_id }}
           restore-keys: parlays-
@@ -51,6 +52,7 @@ jobs:
           path: |
             cache/partidos
             cache/tr
+            cache/fd
             datos
           key: parlays-${{ github.run_id }}
 

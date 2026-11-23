@@ -953,6 +953,7 @@ function contextoHTML(j){
     const c = pv.clima;
     x.push(`${j.clima_alerta ? '<b class="w">' : ''}Clima: ${esc(j.clima_txt || '')}${c.temp_c != null ? ' ' + c.temp_c + '°C' : ''}${c.rafaga_kmh != null ? ' · ráfagas ' + c.rafaga_kmh + ' km/h' : ''}${c.lluvia != null ? ' · lluvia ' + Math.round(c.lluvia) + '%' : ''}${j.clima_alerta ? '</b>' : ''}`);
   } else if (j.indoor && j.base === 'nfl') x.push('Estadio techado');
+  if (j.tarjetas_txt) x.push(`Tarjetas (últimos partidos): ${esc(j.tarjetas_txt)}`);
   if (j.arbitro_txt) x.push(`Árbitro ${esc(j.arbitro_txt)}`);
   if (j.division) x.push(`${esc(j.division)}${j.estelar ? ' · pelea estelar' : ''}`);
   for (const t of j.peleadores || []) x.push(esc(t));

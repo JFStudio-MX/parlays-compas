@@ -17,6 +17,7 @@ import webbrowser
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
+import arbitros as fd_arbitros
 import avisos
 import contexto
 import historial
@@ -27,7 +28,7 @@ import ufc
 from nucleo import (AQUI, B, BASE, BLOQUEO, CACHE, CASAS_PA, COPAS, DATOS, DEPORTE, DIAS_ES, INDIVIDUALES, LIGAS,
                     LIGAS_DOMESTICAS,
                     MESES_ES, MX, NCAA, SALIDA, VERSION_PARTIDO, a_mx, americano_de_decimal, calendario,
-                    cargar_partido, casa_cubre, escribir_json, etiqueta_dia, get_json, leer_json, leer_momios,
+                    cargar_partido, casa_cubre, escribir_json, etiqueta_dia, get_json, leer_json, leer_momios, media,
                     momio_pata, rasgos, ultimos_ids)
 
 N_PARTIDOS = 10  # historial por equipo
@@ -265,21 +266,62 @@ def poner_contexto(g, picks, arbitros, prom_tarjetas):
             if prob and prob["id"] != p["pid"]:
                 p["alerta"] = True
                 p["tags"] = list(p["tags"]) + [f"⚠ el probable es {prob['nombre']}"]
-    # árbitro (fútbol)
-    arb = pv.get("arbitro")
-    if base == "futbol" and arb and arb in arbitros and arbitros[arb][1] >= 3:
+    if base != "futbol":
+        return
+    # tarjetas esperadas: lo que recibe cada equipo y lo que reciben sus rivales
+    tL, tV = g["L"].get("tarjetas"), g["V"].get("tarjetas")
+    esperado = None
+    if tL and tV:
+        aL = media([tL["rec"], tV["riv"]])  # lo que suele recibir el local y lo que le sacan a los rivales del visitante
+        aV = media([tV["rec"], tL["riv"]])
+        esperado = round(aL + aV, 1)
+        g["tarjetas_txt"] = (f"{g['L']['corto']} recibe {tL['rec']:.1f}" + (f" (sus rivales {tL['riv']:.1f})" if tL["riv"] is not None else "")
+                             + f" · {g['V']['corto']} recibe {tV['rec']:.1f}" + (f" (sus rivales {tV['riv']:.1f})" if tV["riv"] is not None else "")
+                             + f" · esperado ≈ {esperado:.1f} por partido")
+        g["tarjetas_esp"] = esperado
+    # árbitro: football-data (Inglaterra/Escocia) y, si no, lo poco que traiga ESPN
+    fd = g.get("arbitro") or {}
+    arb, avg, n, base_liga, o45 = None, None, 0, prom_tarjetas, None
+    if fd.get("prom") is not None:
+        arb, avg, n, base_liga, o45 = fd["nombre"], fd["prom"], fd["n"], fd.get("liga_prom"), fd.get("o45")
+        g["arbitro_txt"] = (f"{arb}: {avg:.1f} tarjetas por partido ({n} partidos"
+                            + (f", esta temporada {fd['prom_act']:.1f}" if fd.get("prom_act") is not None and fd.get("n_act", 0) >= 3 else "")
+                            + ")" + (f" · promedio de la liga {base_liga:.1f}" if base_liga else "")
+                            + (f" · más de 4.5 en {o45:.0%}" if o45 is not None else ""))
+    elif fd.get("nombre"):
+        g["arbitro_txt"] = f"{fd['nombre']} (todavía sin suficientes partidos para promedio)"
+    elif pv.get("arbitro") in arbitros and arbitros[pv["arbitro"]][1] >= 3:
+        arb = pv["arbitro"]
         avg, n = arbitros[arb]
         g["arbitro_txt"] = f"{arb}: {avg:.1f} tarjetas por partido ({n} partidos)"
-        for p in picks:
-            if p["fam"] in ("tar_o", "tar_u"):
-                p["tags"] = list(p["tags"]) + [f"árbitro {avg:.1f} tarj/partido"]
-        if prom_tarjetas and avg - prom_tarjetas >= 1.0:
-            cands = [p for p in picks if p["fam"] == "tar_o" and p["orden"] <= avg - 0.5 and p["hits"] / p["n"] >= 0.6]
-            if cands:
-                q = max(cands, key=lambda p: p["orden"])
-                q.update(joya="arbitro", score=(avg - prom_tarjetas) / 3,
-                         razon=(f"Pita {arb}, que saca {avg:.1f} tarjetas por partido ({n} partidos) contra "
-                                f"{prom_tarjetas:.1f} del promedio. Se cumplió {q['hits']}/{q['n']} en los partidos de ambos."))
+    for p in picks:
+        if p["fam"] in ("tar_o", "tar_u"):
+            extra = []
+            if esperado is not None:
+                extra.append(f"esperado {esperado:.1f} tarj")
+            if avg is not None:
+                extra.append(f"árbitro {avg:.1f} tarj/partido")
+            p["tags"] = list(p["tags"]) + extra
+    if avg is None or not base_liga or n < 5:
+        return
+    dif = avg - base_liga
+    # joyita: árbitro muy tarjetero -> más de X; muy permisivo -> menos de X (y que el historial de ambos lo respalde)
+    if dif >= 0.8:
+        cands = [p for p in picks if p["fam"] == "tar_o" and p["orden"] <= avg - 0.5 and p["hits"] / p["n"] >= 0.6]
+        q = max(cands, key=lambda p: p["orden"]) if cands else None
+        quien = "saca"
+    elif dif <= -0.8:
+        cands = [p for p in picks if p["fam"] == "tar_u" and -p["orden"] >= avg + 0.5 and p["hits"] / p["n"] >= 0.6]
+        q = min(cands, key=lambda p: -p["orden"]) if cands else None
+        quien = "solo saca"
+    else:
+        q = None
+    if q:
+        q.update(joya="arbitro", score=abs(dif) / 3,
+                 razon=(f"Pita {arb}, que {quien} {avg:.1f} tarjetas por partido ({n} partidos) contra "
+                        f"{base_liga:.1f} del promedio de la liga"
+                        + (f"; con estos equipos se esperan {esperado:.1f}" if esperado is not None else "")
+                        + f". Se cumplió {q['hits']}/{q['n']} en los partidos de ambos."))
 
 
 # --------------------------------------------------------------------------- Telegram
@@ -355,11 +397,18 @@ def main():
            if lh not in NCAA and lh != "all"}
     recs_futbol = {r["id"]: r for (lh, _), rs in recs_equipo.items() if base_liga.get(lh) == "futbol" for r in rs}
     arbitros, prom_tarjetas = contexto.tarjetas_por_arbitro(recs_futbol.values())
+    try:  # quién pita y su promedio (football-data: Premier, Championship, Escocia)
+        arb_fd = fd_arbitros.asignar(juegos, ahora)
+    except Exception as e:
+        print(f"   (árbitros football-data: {e})")
+        arb_fd = {}
 
     print("5/6 Calculando candados, joyitas y combinadas…")
     todos, combos = [], []
     for g in juegos:
         g["previo"] = previos.get(g["id"]) or {}
+        if arb_fd.get(g["id"]):
+            g["arbitro"] = arb_fd[g["id"]]
         recs, hist = {}, {}
         for lado in ("L", "V"):
             tid, lh = g[lado]["id"], g[lado]["liga_hist"]
@@ -368,6 +417,12 @@ def main():
             g[lado]["forma"] = "".join("G" if f["margen"] > 0 else ("P" if f["margen"] < 0 else "E") for f in hist[lado][:5])
             g[lado]["n_hist"] = len(hist[lado])
             g[lado]["descanso"] = contexto.descanso(calendarios.get((lh, tid), []), g["fecha"])
+            if g["base"] == "futbol":  # tarjetas por partido: las suyas y las de sus rivales
+                tf = [f["tarf"] for f in hist[lado] if f.get("tarf") is not None]
+                tc = [f["tarc"] for f in hist[lado] if f.get("tarc") is not None]
+                if len(tf) >= 3:
+                    g[lado]["tarjetas"] = {"rec": round(media(tf), 1), "n": len(tf),
+                                           "riv": round(media(tc), 1) if len(tc) >= 3 else None}
             if g["base"] == "nhl":
                 abridores, cuenta_p = contexto.porteros_historial(recs[lado], tid)
                 prob = (g["previo"].get("porteros") or {}).get(lado)

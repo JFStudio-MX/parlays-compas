@@ -17,7 +17,7 @@ Ligas: NBA, NFL, NHL, UFC, NCAA básquet y NCAA americano (en NCAA solo partidos
 Fútbol: Liga MX, Premier, LaLiga, Serie A, Bundesliga, Ligue 1, Eredivisie, Liga Portugal, Turquía, Bélgica, Escocia, Championship, Brasileirão, Argentina, MLS, Arabia, J-League, Champions, Europa League, Conference, Libertadores, Sudamericana y las copas de España, Inglaterra, Italia y Alemania (para los días en que no hay nada).
 UFC: peleas de las próximas 2 semanas con foto, récord, edad, alcance y guardia. Picks de ganador, si va a decisión y método (KO o sumisión). Mientras ESPN no publica momios, el ganador se acerca al 50/50 y "va a decisión" parte del ~47% de UFC. Se califican solas con el resultado de ESPN.
 Tenis: queda para enero, cuando arranca la temporada ATP/WTA.
-Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pronóstico de ESPN, clima y árbitros.
+Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pronóstico de ESPN, clima y tarjetas por equipo. Árbitros de Premier, Championship y Escocia: football-data.co.uk (ESPN no publica el árbitro).
 
 ## Pestañas
 
@@ -27,7 +27,7 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
   - *sin la estrella*: un jugador rinde más cuando falta el lesionado.
   - *rol nuevo*: más minutos o más balones.
   - *matchup*: el rival permite mucho más de lo normal en esa estadística o posición.
-  - *árbitro*: en fútbol, si pita uno que saca muchas tarjetas.
+  - *árbitro*: en fútbol, si pita uno que saca muchas tarjetas (→ más de X) o muy pocas (→ menos de X) contra el promedio de la liga.
   - *línea típica*: en fútbol.
   - Abajo, **combinadas del mismo partido** que pegaron juntas y se refuerzan.
 - **Parlays armados**: se arman al abrir la página con la hora del momento (lo que ya empezó no entra) y respetan los filtros.
@@ -46,7 +46,7 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
   - *Pregúntale a la IA*: preguntas libres; busca en TeamRankings y en el historial de ESPN y contesta con números. Necesita el paquete `anthropic` y una clave (ver Configuración). Cuesta unos centavos de dólar por pregunta y lo muestra en cada respuesta.
 - **Por partido**:
   - Momios y cómo se movió la línea, forma de los últimos 5 y lesionados que sí estaban jugando.
-  - Contexto: pronóstico de ESPN, enfrentamientos directos, descanso ("2 noches seguidas", "semana corta"), portero probable (NHL), clima (NFL al aire libre) y árbitro.
+  - Contexto: pronóstico de ESPN, enfrentamientos directos, descanso ("2 noches seguidas", "semana corta"), portero probable (NHL), clima (NFL al aire libre), tarjetas que recibe cada equipo y sus rivales (fútbol, con las esperadas en el partido) y árbitro con su promedio.
   - Combinadas del partido y todas las apuestas con 70% o más.
 - **Mis apuestas**:
   - Lo que registras con **"Lo metí"** se califica solo cada vez que corres Parlays, incluido el Pago Anticipado.
@@ -115,6 +115,7 @@ Mándale el parlay como lo metiste (casa, monto, momio total y cada pata). Lo ag
 | `nucleo.py` | Descargas de ESPN, lectura de partidos y reglas para calificar. |
 | `mercados.py` | Apuestas, candados, joyitas, combinadas y armado de parlays. |
 | `contexto.py` | Descanso, enfrentamientos, clima, porteros, árbitros y lo que permite cada rival. |
+| `arbitros.py` | Quién pita y su promedio de tarjetas (football-data.co.uk: Premier, Championship, Escocia; sale 2–4 días antes de cada jornada). |
 | `historial.py` | Calificación automática y tus apuestas. |
 | `props_odds.py` | Momios reales de jugadores (The Odds API). |
 | `avisos.py` | Telegram. |
