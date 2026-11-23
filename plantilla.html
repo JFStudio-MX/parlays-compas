@@ -1421,7 +1421,7 @@ if (SERVIDOR){
 
 function render(){
   const vv = vivos();
-  $('#fecha').textContent = `Son las ${horaAhora()} · ${vv.length} partidos por jugar · datos de ${D.titulo}${PUBLICO ? ' (se actualiza cada 2 h, de 8 am a medianoche)' : ''}`;
+  $('#fecha').textContent = `Son las ${horaAhora()} · ${vv.length} partidos por jugar · datos de ${D.titulo}${PUBLICO ? ' (se actualiza cada 15 min, de 8 am a medianoche)' : ''}`;
   if (st.tab === 'stats' || (PUBLICO && st.tab === 'apuestas')) st.tab = 'candados';  // Stats e IA quitada por ahora (sin presupuesto)
   const deps = ['todos', ...ORDEN_DEP.filter(t => vv.some(j => j.tipo === t))];
   if (!deps.includes(st.dep)) st.dep = 'todos';
