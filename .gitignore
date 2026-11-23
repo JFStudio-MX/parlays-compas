@@ -1,0 +1,8 @@
+# datos personales y caché: nunca se suben
+datos/
+cache/
+salida/
+PARLAYS.html
+__pycache__/
+*.tmp
+*.pyc

@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0d12">
+<title>Parlays</title>
+<style>
+:root{
+  --bg:#0b0d12;--s1:#131720;--s2:#1a1f2b;--s3:#222838;--bd:#272e40;
+  --tx:#e9ecf3;--mu:#8a93a8;--mu2:#5f6880;
+  --ok:#2fd27a;--okb:rgba(47,210,122,.14);--no:#ff5c6c;--nob:rgba(255,92,108,.12);
+  --gold:#ffc94d;--goldb:rgba(255,201,77,.12);--ac:#6f9bff;--acb:rgba(111,155,255,.13);
+  --nba:#ff8a3d;--nfl:#7aa2ff;--nhl:#8fd8ff;--futbol:#3ddc84;--ncaab:#ffb070;--ncaaf:#b9a2ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:20;background:rgba(11,13,18,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+.hwrap{max-width:1320px;margin:0 auto;padding:14px 20px 10px}
+.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:19px;margin:0;font-weight:700;letter-spacing:-.01em}
+.fecha{color:var(--mu);font-size:13px}
+.acciones{margin-left:auto;display:flex;gap:8px;align-self:center}
+.hoybtn{background:var(--gold);color:#1d1500;border:0;border-radius:10px;padding:7px 14px;font-weight:700;cursor:pointer}
+.hoybtn:hover{filter:brightness(1.08)}
+.hoybtn small{font-weight:600;opacity:.75;margin-left:4px}
+.hoybtn:disabled{opacity:.45;cursor:default;filter:none}
+.actbtn{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:7px 12px;font-weight:600;cursor:pointer}
+.actbtn:disabled{opacity:.6;cursor:wait}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.chip{border:1px solid var(--bd);background:var(--s1);border-radius:999px;padding:4px 12px;cursor:pointer;font-size:13px;color:var(--mu)}
+.chip.on{background:var(--tx);color:#0b0d12;border-color:var(--tx);font-weight:600}
+.sep{width:1px;background:var(--bd);margin:2px 4px;align-self:stretch}
+.casa{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mu)}
+.casa select{background:var(--goldb);border:1px solid rgba(255,201,77,.4);color:var(--gold);border-radius:999px;padding:3px 10px;font-weight:600;cursor:pointer}
+.casa select option{background:var(--s1);color:var(--tx)}
+.casa small{color:var(--mu2)}
+.tabsrow{display:flex;align-items:flex-end;gap:8px;margin-top:10px}
+.tabs{display:flex;gap:2px;overflow-x:auto;flex:1}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;cursor:pointer;color:var(--mu);font-weight:600;white-space:nowrap}
+.tab.on{color:var(--tx);border-color:var(--tx)}
+.tab .n{font-weight:500;color:var(--mu2);margin-left:4px}
+.filbtn{flex:none;background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:6px 12px;cursor:pointer;font-weight:600;margin-bottom:4px}
+.filbtn.on{background:var(--ac);border-color:var(--ac);color:#06122e}
+.layout{max-width:1320px;margin:0 auto;padding:18px 20px 120px;display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:22px;align-items:start}
+.intro{color:var(--mu);font-size:13px;margin:0 0 14px;max-width:780px}
+.intro b{color:var(--tx)}
+h2.sec{font-size:16px;margin:26px 0 10px}
+.lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:13px 14px 12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card.joya{border-color:rgba(255,201,77,.35);background:linear-gradient(180deg,rgba(255,201,77,.06),transparent 60%),var(--s1)}
+.card.combo{border-color:rgba(111,155,255,.35);background:linear-gradient(180deg,rgba(111,155,255,.07),transparent 60%),var(--s1)}
+.meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mu);min-width:0}
+.dep{font-weight:700;font-size:11px;letter-spacing:.04em;padding:2px 7px;border-radius:6px;background:var(--s3);white-space:nowrap}
+.dep.nba{color:var(--nba)}.dep.nfl{color:var(--nfl)}.dep.nhl{color:var(--nhl)}.dep.futbol{color:var(--futbol)}.dep.ncaab{color:var(--ncaab)}.dep.ncaaf{color:var(--ncaaf)}
+.meta .jg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.add{margin-left:auto;flex:none;width:30px;height:30px;border-radius:9px;border:1px solid var(--bd);background:var(--s2);cursor:pointer;font-size:18px;line-height:1;color:var(--tx)}
+.add:hover{background:var(--s3)}
+.add.in{background:var(--ok);border-color:var(--ok);color:#06210f;font-size:15px}
+.txt{font-size:16px;font-weight:650;line-height:1.25}
+.sub{font-size:12px;color:var(--mu);margin-top:2px}
+.srow{display:flex;align-items:center;gap:6px;min-width:0}
+.slab{font-size:10.5px;color:var(--mu);display:inline-flex;align-items:center;gap:3px;width:52px;flex:none;white-space:nowrap;overflow:hidden}
+.slab .lg{width:14px;height:14px}
+.sqs{display:flex;gap:3px;flex-wrap:nowrap;overflow:hidden}
+.sq{min-width:24px;height:22px;padding:0 4px;border-radius:5px;display:grid;place-items:center;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+.sq.ok{background:var(--okb);color:var(--ok)}
+.sq.no{background:var(--nob);color:var(--no)}
+.cap{font-size:10.5px;color:var(--mu2)}
+.nums{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mu)}
+.nums b{color:var(--tx);font-variant-numeric:tabular-nums}
+.pie{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;border-top:1px solid var(--bd);padding-top:9px}
+.prob{font-size:22px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1}
+.prob small{display:block;font-size:10.5px;color:var(--mu);font-weight:500;margin-top:3px}
+.momio{text-align:right;font-variant-numeric:tabular-nums}
+.momio .m{font-size:17px;font-weight:700}
+.momio .m.aprox{color:var(--mu)}
+.momio small{display:block;font-size:10.5px;color:var(--mu)}
+.razon{font-size:12.5px;color:#d8dbe4;background:var(--goldb);border-radius:9px;padding:8px 10px}
+.pa{font-size:12.5px;color:#f3e2b5;background:var(--goldb);border:1px dashed rgba(255,201,77,.35);border-radius:9px;padding:7px 10px}
+.pa b{color:var(--gold)}
+.tags{display:flex;gap:5px;flex-wrap:wrap}
+.tag{font-size:11px;padding:2px 7px;border-radius:6px;background:var(--s3);color:var(--mu)}
+.tag.w{color:var(--gold)}
+.tag.ya{color:var(--no)}
+.vacio{color:var(--mu);padding:24px 0}
+.lg{width:18px;height:18px;object-fit:contain;flex:none}
+.pt{display:inline-flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
+.pt b{font-weight:600;color:#cfd4df}
+.at{color:var(--mu2);font-size:11px}
+.rk{font-size:10px;color:var(--mu);font-weight:600}
+.cab{display:flex;gap:12px;align-items:center;min-width:0}
+.cab .txt{overflow-wrap:anywhere}
+.av{flex:none;border-radius:50%;background:var(--s3);overflow:hidden;display:grid;place-items:center}
+.av img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.av img.fb,.av.lgav img{object-fit:contain;width:70%;height:70%}
+.av.duo{position:relative;display:block}
+.av.duo img{position:absolute;width:54%;height:54%;object-fit:contain}
+.av.duo img:first-child{left:9%;top:9%}
+.av.duo img:last-child{right:9%;bottom:9%}
+.apu{font-size:16.5px;font-weight:700;color:var(--tx);line-height:1.25}
+.cuando{font-weight:700;color:var(--tx)}
+.define{font-size:12.5px;color:var(--mu);background:var(--s2);border-radius:9px;padding:7px 10px}
+.define b{color:var(--gold)}
+.legl{display:flex;flex-direction:column;gap:10px}
+.lgi{display:flex;gap:10px;align-items:flex-start}
+.lgi .t{font-size:13.5px;font-weight:600;line-height:1.25}
+.lgi .m{font-size:11.5px;color:var(--mu);margin-top:2px;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.lgi .pq{font-size:11.5px;color:#b8c0d2;margin-top:4px;line-height:1.35}
+.lgi .pq .w{color:var(--gold)}
+.lgi .mo{margin-left:auto;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:13.5px;flex:none}
+.lgi .mo small{display:block;font-size:10.5px;color:var(--mu);font-weight:500}
+.lgi .ex{flex:none;background:none;border:0;color:var(--mu2);cursor:pointer;font-size:15px;padding:0 2px;line-height:1}
+.lgi .ex:hover{color:var(--no)}
+.resumen{font-size:12.5px;color:#cfd4df;background:var(--acb);border-radius:9px;padding:8px 10px}
+.alcance{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:12.5px;color:var(--mu);background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:9px 12px;margin-bottom:14px}
+.alcance b{color:var(--tx)}
+.link{background:none;border:0;color:var(--ac);cursor:pointer;padding:0;text-decoration:underline}
+/* filtros */
+.fpanel{background:var(--s1);border:1px solid rgba(111,155,255,.4);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:grid;gap:10px}
+.fpanel .fl{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12.5px;color:var(--mu)}
+.fpanel .fl > b{color:var(--tx);font-weight:600;min-width:86px}
+.fpanel input[type=text],.fpanel input[type=number],.fpanel select{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:5px 8px}
+.fpanel input[type=number]{width:84px;text-align:right}
+.fpanel .chip{font-size:12px;padding:3px 10px}
+.fpanel label{display:inline-flex;gap:5px;align-items:center;cursor:pointer}
+/* slip */
+.slip{position:sticky;top:160px;background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:14px;max-height:calc(100vh - 180px);display:flex;flex-direction:column;overflow-y:auto}
+.slip h2{font-size:15px;margin:0 0 2px}
+.slip .hint{font-size:12px;color:var(--mu);margin:0 0 10px}
+.legs{display:flex;flex-direction:column;gap:7px}
+.leg{background:var(--s2);border-radius:10px;padding:8px 9px;display:grid;grid-template-columns:30px 1fr auto auto;gap:3px 9px;align-items:center}
+.leg > :first-child{grid-row:1/3;grid-column:1}
+.leg .lt{font-size:13px;font-weight:600;line-height:1.25;grid-column:2}
+.leg .lj{font-size:11px;color:var(--mu);grid-column:2}
+.leg .lj .cuando{color:#cfd4df}
+.leg input{width:70px;background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:4px 6px;text-align:right;font-variant-numeric:tabular-nums;grid-row:1/3;grid-column:3}
+.leg input.aprox{color:var(--mu);border-style:dashed}
+.leg .x{grid-row:1/3;grid-column:4;background:none;border:0;color:var(--mu2);cursor:pointer;font-size:16px}
+.tot{border-top:1px solid var(--bd);margin-top:10px;padding-top:10px;display:grid;gap:6px}
+.fila{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--mu);gap:10px}
+.fila b{color:var(--tx);font-variant-numeric:tabular-nums}
+.fila .big{font-size:22px;font-weight:800}
+.fila input,.fila select{width:120px;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:5px 7px;text-align:right}
+.aviso{font-size:12px;border-radius:9px;padding:7px 9px;background:var(--s2);color:var(--mu)}
+.aviso.ok{background:var(--okb);color:var(--ok)}
+.aviso.w{background:var(--goldb);color:var(--gold)}
+.aviso.no{background:var(--nob);color:var(--no)}
+.btns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{flex:1;border:1px solid var(--bd);background:var(--s2);border-radius:9px;padding:7px 10px;cursor:pointer;font-weight:600;font-size:13px;white-space:nowrap}
+.btn.pri{background:var(--tx);color:#0b0d12;border-color:var(--tx)}
+.btn.oro{background:var(--gold);color:#1d1500;border-color:var(--gold)}
+.btn.chico{flex:none;padding:4px 9px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:default}
+.form{display:grid;gap:7px;background:var(--s2);border-radius:11px;padding:10px;margin-top:4px}
+.form .fila input,.form .fila select{background:var(--s1)}
+/* parlays armados */
+.pl{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pl h3{margin:0;font-size:17px}
+.pl .d{color:var(--mu);font-size:12.5px;margin:2px 0 0}
+.pl .res{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap}
+.pl .res div{font-size:11px;color:var(--mu)}
+.pl .res b{display:block;font-size:20px;color:var(--tx);font-variant-numeric:tabular-nums}
+.pl .btn{flex:none;margin-top:auto}
+.lista.pls{align-items:start}
+/* partidos */
+.juego{background:var(--s1);border:1px solid var(--bd);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.jh{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;flex-wrap:wrap}
+.equipos{font-size:15px;font-weight:650;display:flex;align-items:center;gap:8px}
+.equipos img{width:22px;height:22px;object-fit:contain}
+.hr{color:var(--mu);font-size:12px}
+.odds{margin-left:auto;display:flex;gap:12px;font-size:12px;color:var(--mu);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.odds b{color:var(--tx)}
+.jb{display:none;border-top:1px solid var(--bd);padding:12px 14px;gap:12px;flex-direction:column}
+.juego.open .jb{display:flex}
+.forma{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--mu);align-items:center}
+.fm{display:inline-flex;gap:2px;margin-left:5px}
+.fm i{font-style:normal;width:17px;height:17px;border-radius:4px;display:grid;place-items:center;font-size:10px;font-weight:700}
+.fm .G{background:var(--okb);color:var(--ok)}.fm .P{background:var(--nob);color:var(--no)}.fm .E{background:var(--s3);color:var(--mu)}
+.ctx{display:flex;flex-wrap:wrap;gap:6px}
+.ctx span{font-size:12px;background:var(--s2);border-radius:8px;padding:4px 9px;color:#cfd4df}
+.ctx span.w{color:var(--gold);background:var(--goldb)}
+.les{font-size:12px;color:var(--mu)}
+.les b{color:var(--gold);font-weight:600}
+.rows{display:flex;flex-direction:column}
+.row{display:grid;grid-template-columns:28px 1fr 64px 52px 64px 32px;gap:8px;align-items:center;padding:6px 0;border-top:1px solid rgba(39,46,64,.6);font-size:13px}
+.row:first-child{border-top:0}
+.row .r1 small{display:block;color:var(--mu);font-size:11px}
+.row .c{text-align:right;font-variant-numeric:tabular-nums;color:var(--mu)}
+.row .c b{color:var(--tx)}
+.row .add{width:28px;height:28px;font-size:16px}
+.mov{color:var(--gold)}
+.como{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--mu)}
+.como summary{cursor:pointer;color:var(--tx);font-weight:600}
+.como ul{margin:8px 0 2px;padding-left:18px}
+.como li{margin:3px 0}
+/* mis apuestas / historial / stats */
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:11px 13px}
+.kpi small{display:block;font-size:11.5px;color:var(--mu)}
+.kpi b{font-size:22px;font-variant-numeric:tabular-nums}
+.kpi b.pos{color:var(--ok)}.kpi b.neg{color:var(--no)}
+.barra{height:7px;background:var(--s3);border-radius:9px;overflow:hidden;margin-top:6px}
+.barra i{display:block;height:100%;background:var(--gold)}
+.ap{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.ap .hd{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;color:var(--mu)}
+.ap .hd b{color:var(--tx)}
+.est{font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:7px;background:var(--s3);color:var(--mu)}
+.est.gano,.est.gano_pa{background:var(--okb);color:var(--ok)}
+.est.perdio{background:var(--nob);color:var(--no)}
+.est.cashout{background:var(--acb);color:var(--ac)}
+.al{display:flex;gap:8px;align-items:center;font-size:13px}
+.al .ic{width:20px;text-align:center;font-weight:700}
+.al .ic.gano,.al .ic.gano_pa{color:var(--ok)}.al .ic.perdio{color:var(--no)}.al .ic.pendiente{color:var(--mu2)}.al .ic.anulada{color:var(--mu)}
+.al small{color:var(--mu)}
+table.t{width:100%;border-collapse:collapse;font-size:13px;background:var(--s1);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+table.t th{text-align:left;font-weight:600;color:var(--mu);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--bd)}
+table.t td{padding:7px 10px;border-bottom:1px solid rgba(39,46,64,.6);font-variant-numeric:tabular-nums}
+table.t tr:last-child td{border-bottom:0}
+table.t td.r,table.t th.r{text-align:right}
+table.t tr.mio td{background:var(--goldb)}
+.ok{color:var(--ok)}.no{color:var(--no)}
+.cob{background:var(--acb);border-radius:10px;padding:9px 11px;font-size:12.5px;display:grid;gap:6px}
+.cob input{width:90px;background:var(--s1);border:1px solid var(--bd);border-radius:7px;padding:4px 7px;text-align:right}
+.caja{background:var(--s1);border:1px solid var(--bd);border-radius:14px;padding:14px;display:grid;gap:10px}
+.caja textarea{width:100%;min-height:64px;background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:9px 11px;resize:vertical}
+.caja input[type=text],.caja select{background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:7px 10px}
+.burbuja{border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.5}
+.burbuja.q{background:var(--s2);color:#cfd4df;justify-self:end;max-width:85%}
+.burbuja.r{background:var(--acb);color:var(--tx)}
+.burbuja.r small{display:block;color:var(--mu);font-size:11px;margin-top:6px}
+.trres{display:flex;flex-wrap:wrap;gap:6px}
+.trres button{background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:5px 10px;cursor:pointer;font-size:12.5px;text-align:left}
+.trres button small{display:block;color:var(--mu);font-size:11px}
+.trres button.on{border-color:var(--ac)}
+.fab{display:none}
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr;padding:14px 12px 110px}
+  .hwrap{padding:12px 12px 8px}
+  .lista{grid-template-columns:1fr}
+  .slip{position:fixed;left:0;right:0;bottom:0;top:auto;border-radius:18px 18px 0 0;max-height:82vh;z-index:40;transform:translateY(105%);transition:transform .25s;border-bottom:0}
+  .slip.abierta{transform:none}
+  .fab{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:30;background:var(--tx);color:#0b0d12;border:0;border-radius:14px;padding:13px 16px;font-weight:700;justify-content:space-between;cursor:pointer;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  .row{grid-template-columns:28px 1fr 44px 54px 30px}.row .c.hide{display:none}
+}
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <div class="top"><h1>Asistente de parlays</h1><span class="fecha" id="fecha"></span>
+    <div class="acciones"><button class="actbtn" id="act" style="display:none" title="Vuelve a bajar momios, lesiones y partidos">🔄 Actualizar</button>
+      <button class="hoybtn" id="hoy">⚡ Armar parlay de hoy</button></div></div>
+  <div class="filtros" id="filtros"></div>
+  <div class="tabsrow"><div class="tabs" id="tabs"></div><button class="filbtn" id="filbtn">⚙ Filtrar</button></div>
+</div></header>
+
+<div class="layout">
+  <main id="main"></main>
+  <aside class="slip" id="slip"></aside>
+</div>
+<button class="fab" id="fab"></button>
+
+<script>
+const D = /*__DATOS__*/null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtM = a => a == null ? '—' : (a > 0 ? '+' : '') + a;
+const dec = a => a > 0 ? 1 + a / 100 : 1 + 100 / (-a);
+const amer = d => d >= 2 ? Math.round((d - 1) * 100) : -Math.round(100 / (d - 1));
+const impl = m => m > 0 ? 100 / (m + 100) : -m / (-m + 100);
+const pesos = n => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('es-MX', {maximumFractionDigits: 0});
+const pct = p => p == null ? '—' : (p * 100 >= 10 ? Math.round(p * 100) : (p * 100).toFixed(1)) + '%';
+const J = Object.fromEntries(D.juegos.map(j => [j.id, j]));
+const P = D.picks;
+const DEP = {nba:'NBA', nfl:'NFL', nhl:'NHL', futbol:'FÚT', ncaab:'NCAAB', ncaaf:'NCAAF'};
+const PUBLICO = !!D.config.publico;  // versión para los compas: sin apuestas, sin Stats/IA, sin Actualizar
+const SERVIDOR = !PUBLICO && location.protocol.startsWith('http');
+const CASAS_PA = D.config.casas_pa || {};
+const CASAS = ['Playdoit', 'Caliente', 'Draftea', 'Stake'];
+const MOMIO_MIN_CANDADO = -650;
+
+// ---------- la hora de AHORA (al abrir la página): días, horas y qué partidos ya empezaron
+const DIAS_JS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+const MESES_JS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+const dos = n => String(n).padStart(2, '0');
+let AHORA = new Date();
+function fechar(){
+  AHORA = new Date();
+  const hoy = new Date(AHORA); hoy.setHours(0, 0, 0, 0);
+  D.juegos.forEach(j => {
+    const t = new Date(j.fecha), d0 = new Date(t);
+    d0.setHours(0, 0, 0, 0);
+    const diff = Math.round((d0 - hoy) / 864e5);
+    j.t = t;
+    j.dia = diff === 0 ? 'Hoy' : diff === 1 ? 'Mañana' : `${DIAS_JS[t.getDay()]} ${t.getDate()}`;
+    j.dl = `${DIAS_JS[t.getDay()]} ${t.getDate()} ${MESES_JS[t.getMonth()]}`;
+    j.hora = `${dos(t.getHours())}:${dos(t.getMinutes())}`;
+    j.vivo = t > AHORA;  // false = ya empezó o ya pasó
+  });
+}
+fechar();
+const vivos = () => D.juegos.filter(j => j.vivo);
+const horaAhora = () => `${dos(AHORA.getHours())}:${dos(AHORA.getMinutes())}`;
+const fechaCorta = iso => { const t = new Date(iso); return `${DIAS_JS[t.getDay()]} ${t.getDate()} ${MESES_JS[t.getMonth()]}`; };
+
+// ---------- estado (lo que eliges se queda guardado en el navegador)
+const guardado = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } };
+let st = {dep:'todos', dia:'todos', tab:'candados', filtro:false};
+let slip = guardado('parlay_slip_v2', []);
+let apuesta = +(localStorage.getItem('parlay_apuesta') || 50);
+let CASA_SEL = guardado('parlay_casa', D.config.casa || 'Playdoit');
+const FILT0 = {q:'', clase:'todas', mercados:[], minProb:0, momMin:'', momMax:'', soloReal:false, soloPA:false, sinAlertas:false, ligas:[], orden:'auto'};
+let FILT = {...FILT0, ...guardado('parlay_filtros_v1', {})};
+let EXCL = new Set(guardado('parlay_excluidas', []));
+let APS = D.apuestas || [], EST_AP = D.estado_ap || {};
+let registrando = false, cubrir = {}, metaCompletar = '', msgCompletar = '';
+let IA = {estado: null, conv: [], cargando: false, q: ''};
+let TR = {dep: 'nfl', q: '', res: [], tabla: null, cargando: '', msg: '', soloSemana: false};
+const guardarFiltros = () => localStorage.setItem('parlay_filtros_v1', JSON.stringify(FILT));
+const guardarExcl = () => localStorage.setItem('parlay_excluidas', JSON.stringify([...EXCL]));
+
+// Pago Anticipado según la casa que elegiste
+const paActivo = dep => !!(CASAS_PA[CASA_SEL] || {})[dep];
+const estDe = p => (p.pa && paActivo(p.deporte)) ? p.pa.est : p.est;
+function momioSug(p){ return p.momio ?? amer(Math.max(1.02, 1 / (Math.min(estDe(p), .97) * 1.06))); }
+function textoPA(casa){
+  const r = CASAS_PA[casa] || {};
+  const u = {nba: 'NBA 20', nfl: 'NFL 17', nhl: 'NHL 3 goles', futbol: 'Fútbol 2 goles'};
+  const xs = Object.keys(u).filter(k => r[k]).map(k => u[k]);
+  return xs.length ? 'PA: ' + xs.join(' · ') : 'sin Pago Anticipado';
+}
+
+// ---------- tipos de apuesta (para el filtro)
+const CAT_EQ = {ml_L:'ganador', ml_V:'ganador', emp:'ganador', dc_L:'ganador', dc_V:'ganador', spa_L:'ganador', spa_V:'ganador',
+  hcp_L:'handicap', hcp_V:'handicap', tot_o:'totales', tot_u:'totales', gL_o:'totales', gV_o:'totales', m1_o:'mitad', m1_u:'mitad',
+  btts_si:'ambos', btts_no:'ambos', cor_o:'corners', cor_u:'corners', corL_o:'corners', corV_o:'corners', tar_o:'tarjetas', tar_u:'tarjetas'};
+const CAT_JUG = {pts:'puntos', pra:'puntos', reb:'rebotes', ast:'asistencias', tpm:'triples', pyd:'yardas', ruy:'yardas', rey:'yardas',
+  recs:'recepciones', td:'td', ptd:'td', sog:'tiros', tir:'tiros', tap:'tiros', gol:'goles', pto:'goles', sv:'atajadas', tar:'tarjetas'};
+const MERCADOS = [['ganador','Ganador'],['handicap','Hándicap'],['totales','Totales'],['mitad','1a mitad / periodo'],['ambos','Ambos anotan'],
+  ['corners','Córners'],['tarjetas','Tarjetas'],['puntos','Puntos / PRA'],['rebotes','Rebotes'],['asistencias','Asistencias'],['triples','Triples'],
+  ['yardas','Yardas'],['recepciones','Recepciones'],['td','Touchdowns'],['tiros','Tiros'],['goles','Goles / puntos (NHL)'],['atajadas','Atajadas']];
+const catDe = p => p.clase === 'jugador' ? CAT_JUG[p.stat] : CAT_EQ[p.fam];
+const sinAcentos = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const nFiltros = () => [FILT.q, FILT.clase !== 'todas', FILT.mercados.length, FILT.minProb, FILT.momMin !== '', FILT.momMax !== '', FILT.soloReal, FILT.soloPA, FILT.sinAlertas, FILT.ligas.length, FILT.orden !== 'auto'].filter(Boolean).length;
+function pasaFILT(p){
+  const j = J[p.juego];
+  if (FILT.q){
+    const q = sinAcentos(FILT.q);
+    const donde = sinAcentos([p.texto, p.quien, p.sub, j.L.nombre, j.V.nombre, j.L.corto, j.V.corto].join(' '));
+    if (!q.split(/\s+/).every(w => donde.includes(w))) return false;
+  }
+  if (FILT.clase !== 'todas' && p.clase !== FILT.clase) return false;
+  if (FILT.mercados.length && !FILT.mercados.includes(catDe(p))) return false;
+  if (FILT.minProb && estDe(p) < FILT.minProb) return false;
+  const m = momioSug(p);
+  if (FILT.momMin !== '' && m < +FILT.momMin) return false;
+  if (FILT.momMax !== '' && m > +FILT.momMax) return false;
+  if (FILT.soloReal && p.momio == null) return false;
+  if (FILT.soloPA && !(p.pa && paActivo(p.deporte))) return false;
+  if (FILT.sinAlertas && (p.alerta || (p.tags || []).some(t => t.startsWith('⚠')))) return false;
+  if (FILT.ligas.length && !FILT.ligas.includes(j.liga_nombre)) return false;
+  return true;
+}
+function pasaFiltro(p){
+  const j = J[p.juego];
+  return j.vivo && (st.dep === 'todos' || p.deporte === st.dep) && (st.dia === 'todos' || j.dia === st.dia) && pasaFILT(p);
+}
+function ordenar(ps){
+  const k = {prob: p => -estDe(p), pago: p => -momioSug(p), valor: p => -(estDe(p) - impl(momioSug(p))), hora: p => +J[p.juego].t}[FILT.orden];
+  return k ? [...ps].sort((a, b) => k(a) - k(b)) : ps;
+}
+
+// ---------- parlays armados al momento, solo con partidos que no han empezado (y los filtros puestos)
+let PLS = [];
+const rDe = p => Math.log(dec(momioSug(p))) / -Math.log(Math.min(estDe(p), .99)) * (p.real ? 1 : .9);
+function poolParlays(){ return D.pool.map(i => P[i]).filter(p => p && !EXCL.has(p.id) && pasaFiltro(p)); }
+function construirParlays(){
+  const pool = poolParlays();
+  pool.forEach(p => { p._r = rDe(p); });
+  // exacto: n patas (una por partido y por equipo, máx. 5 por liga) con la MAYOR probabilidad que todavía pague el objetivo
+  const exacta = (n, objetivo, estMin, rango) => {
+    const datos = pool.filter(p => estDe(p) >= estMin && (!rango || (momioSug(p) >= rango[0] && momioSug(p) <= rango[1])))
+      .map(p => [p, Math.log(Math.min(estDe(p), .99)), Math.log(dec(momioSug(p)))]);
+    const elegir = lam => {
+      const mejor = {};
+      for (const [p, lp, ld] of datos){ const s = lp + lam * ld; if (!mejor[p.juego] || s > mejor[p.juego][0]) mejor[p.juego] = [s, p, ld]; }
+      const legs = [], ligas = {}, usados = new Set(); let suma = 0;
+      for (const [, p, ld] of Object.values(mejor).sort((a, b) => b[0] - a[0])){
+        const g = J[p.juego];
+        if ((ligas[p.liga] || 0) >= 5 || usados.has(g.L.id) || usados.has(g.V.id)) continue;
+        usados.add(g.L.id); usados.add(g.V.id);
+        legs.push(p); ligas[p.liga] = (ligas[p.liga] || 0) + 1; suma += ld;
+        if (legs.length === n) break;
+      }
+      return [legs, suma];
+    };
+    const meta = Math.log(objetivo);
+    let lo = 0, hi = 4, [legs, suma] = elegir(hi);
+    if (suma < meta) return legs;
+    for (let i = 0; i < 40; i++){ const mid = (lo + hi) / 2, [l2, s2] = elegir(mid); if (s2 >= meta){ hi = mid; legs = l2; } else lo = mid; }
+    return legs;
+  };
+  // una por una, la pata que más paga por el riesgo que agrega; una por partido; mezclando deportes
+  const hacer = (nombre, desc, objetivo, maxLegs, estMin, rango, opt = {}) => {
+    if (opt.exacto){
+      const legs = exacta(maxLegs, objetivo, estMin, rango);
+      const d = legs.reduce((a, p) => a * dec(momioSug(p)), 1);
+      if (legs.length < maxLegs * .6 || d < objetivo * .5) return null;
+      return {nombre, desc, legs: legs.map(p => p.id), monto: opt.monto};
+    }
+    const legs = [], juegos = new Set(), cuenta = {};
+    let d = 1;
+    while (legs.length < maxLegs && d < objetivo){
+      let mejor = null, mv = -Infinity;
+      for (const p of pool){
+        if (juegos.has(p.juego) || estDe(p) < estMin) continue;
+        if (rango){ const m = momioSug(p); if (m < rango[0] || m > rango[1]) continue; }
+        const v = p._r - .15 * (cuenta[p.deporte] || 0);
+        if (v > mv){ mv = v; mejor = p; }
+      }
+      if (!mejor) break;
+      legs.push(mejor); juegos.add(mejor.juego);
+      cuenta[mejor.deporte] = (cuenta[mejor.deporte] || 0) + 1;
+      d *= dec(momioSug(mejor));
+    }
+    if (legs.length < 2 || (objetivo < 999 && d < objetivo * .6)) return null;
+    return {nombre, desc, legs: legs.map(p => p.id), monto: opt.monto};
+  };
+  return [
+    hacer('Lotería', '$10 que hagan $20,000 o más: 18 partidos de varias ligas y días (un partido por equipo), cada pata entre -400 y +250. Casi nunca pega: es para soñar con poquito.', 2000, 18, .5, [-400, 250], {exacto: true, monto: 10}),
+    hacer('Escalera de candados', 'Puros favoritos tipo -250 a -600: solos no pagan, juntos sí. Revisa en tu casa los momios con ≈.', 9999, 10, .78, [-650, -230]),
+    hacer('Corto', 'Busca +160 o más con las patas más seguras que todavía pagan algo.', 2.6, 4, .65),
+    hacer('Mediano', 'Busca +500 o más: equilibrio entre pago y probabilidad.', 6, 6, .6),
+    hacer('Bombazo', 'Busca +2000 o más: pegar algo grande con poco. Pega pocas veces, apuesta poquito.', 21, 10, .5),
+  ].filter(Boolean);
+}
+
+// ---------- por qué cada pata (resumen para estar más seguros)
+const media = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
+const f1 = x => (Math.round(x * 10) / 10).toLocaleString('es-MX');
+function porQue(p){
+  const j = J[p.juego], x = [], ojo = [];
+  if (p.clase === 'jugador'){
+    const vals = p.serie[0].map(s => +s[0]).filter(v => !isNaN(v));
+    if (vals.length && !['gol', 'td', 'tar'].includes(p.stat) && !(p.stat === 'pto' && p.umbral === 1) && !(p.stat === 'ptd' && p.umbral === 1))
+      x.push(`promedia ${f1(media(vals))} (últimos 5: ${f1(media(vals.slice(0, 5)))}) y la línea es ${p.umbral - .5}`);
+    x.push(`la pasó ${p.hits} de ${p.n}${p.h5 === p.n5 ? ', y los últimos 5 seguidos' : ''}`);
+    if (p.cancha && p.cancha[1] >= 3) x.push(`${p.lado === 'L' ? 'en casa' : 'de visita'} ${p.cancha[0]}/${p.cancha[1]}`);
+  } else {
+    const eqs = [j.L.corto, j.V.corto];
+    const filas = p.serie.map((s, i) => `${eqs[i]} ${s.filter(v => v[1]).length}/${s.length}`);
+    if (['tot_o', 'tot_u', 'm1_o', 'm1_u', 'cor_o', 'cor_u', 'tar_o', 'tar_u'].includes(p.fam)){
+      const prom = media(p.serie.flat().map(v => +v[0]).filter(v => !isNaN(v)));
+      if (prom != null) x.push(`sus partidos promedian ${f1(prom)}`);
+    }
+    x.push(`se cumplió en los partidos de ${filas.join(' y ')}`);
+    if (p.cancha && p.cancha[1] >= 4) x.push(`en su cancha ${p.cancha[0]}/${p.cancha[1]}`);
+  }
+  const r = p.hits / p.n;
+  if (p.p_mkt) x.push(r >= p.p_mkt + .08 ? `la historia (${pct(r)}) le gana a lo que da la casa (${pct(p.p_mkt)})` : `la casa lo ve en ${pct(p.p_mkt)}`);
+  if (p.pa && paActivo(p.deporte) && p.pa.extra >= .01) x.push(`con PA de ${CASA_SEL} sube a ${pct(p.pa.est)}`);
+  for (const t of p.tags || []){
+    if (t.startsWith('⚠')) ojo.push(t.replace('⚠ ', ''));
+    else if (t.startsWith('rival') || t.startsWith('ESPN') || t.startsWith('🌬') || t.startsWith('árbitro')) x.push(t);
+  }
+  if (p.razon && p.joya) x.push(p.razon.split('. ')[0]);
+  return x.join(' · ') + (ojo.length ? ` <span class="w">· Ojo: ${esc(ojo.join(', '))}</span>` : '');
+}
+
+// ---------- piezas visuales
+const esFut = j => j.tipo === 'futbol';
+// fútbol: Local vs Visita · el resto: Visita @ Local (como en la casa)
+function nomJuego(j){ return esFut(j) ? `${j.L.corto} vs ${j.V.corto}` : `${j.V.corto} @ ${j.L.corto}`; }
+function cuando(j, largo){
+  const hm = j.dia === 'Hoy' || j.dia === 'Mañana';
+  return largo ? `${hm ? j.dia + ' · ' : ''}${j.dl} · ${j.hora}` : `${hm ? j.dia : j.dl} ${j.hora}`;
+}
+function cdn(url, w, h){
+  const m = url && url.match(/^https:\/\/a\.espncdn\.com(\/i\/.+)$/);
+  return m ? `https://a.espncdn.com/combiner/i?img=${m[1]}&w=${w}&h=${h}` : (url || '');
+}
+function logo(url, s = 18, cls = 'lg'){
+  if (!url) return '';
+  const dark = url.replace('/500/', '/500-dark/');  // versión para fondo oscuro
+  return `<img class="${cls}" loading="lazy" src="${cdn(dark, s * 2, s * 2)}" onerror="this.onerror=null;this.src='${cdn(url, s * 2, s * 2)}'" alt="">`;
+}
+const rk = e => e.rank ? `<span class="rk">#${e.rank}</span>` : '';
+function partidoHTML(j, s = 16){
+  const a = esFut(j) ? j.L : j.V, b = esFut(j) ? j.V : j.L;
+  return `<span class="pt">${logo(a.logo, s)}${rk(a)}<b>${esc(a.corto)}</b><span class="at">${esFut(j) ? 'vs' : '@'}</span>${logo(b.logo, s)}${rk(b)}<b>${esc(b.corto)}</b></span>`;
+}
+function avatar(p, s = 42){
+  const j = J[p.juego], sty = `style="width:${s}px;height:${s}px"`;
+  if (p.clase === 'jugador'){
+    const eq = j[p.lado] || {};
+    const fb = cdn((eq.logo || '').replace('/500/', '/500-dark/'), s * 2, s * 2);
+    return `<span class="av" ${sty}><img loading="lazy" src="${cdn(p.foto, Math.round(s * 2.75), s * 2)}" onerror="this.onerror=null;this.className='fb';this.src='${fb}'" alt=""></span>`;
+  }
+  if (p.lado) return `<span class="av lgav" ${sty}>${logo(j[p.lado].logo, Math.round(s * .7), '')}</span>`;
+  const a = esFut(j) ? j.L : j.V, b = esFut(j) ? j.V : j.L;
+  return `<span class="av duo" ${sty}>${logo(a.logo, Math.round(s * .55), '')}${logo(b.logo, Math.round(s * .55), '')}</span>`;
+}
+function titulo(p){
+  return p.clase === 'jugador'
+    ? {t: p.quien, s: `${p.sub} · ${p.liga}`, a: p.apuesta}
+    : {t: p.apuesta || p.texto, s: `${p.sub} · ${p.liga}`, a: ''};
+}
+function textoPata(p){ return p.clase === 'jugador' ? `${p.quien}: ${p.apuesta}` : (p.apuesta || p.texto); }
+function legHTML(p, opts = {}){
+  const j = J[p.juego], m = momioSug(p);
+  return `<div class="lgi">${avatar(p, 32)}<div style="min-width:0;flex:1"><div class="t">${esc(textoPata(p))}</div>
+    <div class="m"><span class="cuando">${esc(cuando(j, true))}</span><span class="dep ${p.deporte}">${DEP[p.deporte]}</span>${partidoHTML(j, 13)}${p.joya ? '<span class="tag w">joyita</span>' : ''}${p.pa && paActivo(p.deporte) ? '<span class="tag w">PA</span>' : ''}</div>
+    ${opts.porque ? `<div class="pq">${porQue(p)}</div>` : ''}</div>
+    <div class="mo">${fmtM(m)}${p.momio == null ? ' ≈' : ''}<small>${pct(estDe(p))}</small></div>
+    ${opts.excluir ? `<button class="ex" data-excluir="${p.id}" title="No me late: quitarla y rearmar">×</button>` : ''}</div>`;
+}
+function serieHTML(p){
+  const j = J[p.juego], eqs = [j.L, j.V];  // en apuestas de partido: fila 1 local, fila 2 visita
+  return p.serie.map((s, i) => `<div class="srow">${p.serie.length > 1 ? `<span class="slab" title="${esc(eqs[i].nombre)}">${logo(eqs[i].logo, 14)}${esc(p.nombres[i])}</span>` : ''}
+    <div class="sqs">${s.slice(0, 10).reverse().map(([v, ok]) => `<span class="sq ${ok ? 'ok' : 'no'}">${esc(v)}</span>`).join('')}</div></div>`).join('');
+}
+function paHTML(p){
+  if (!p.pa) return '';
+  const uni = p.deporte === 'futbol' || p.deporte === 'nhl' ? 'goles' : 'puntos';
+  const casas = CASAS.filter(c => (CASAS_PA[c] || {})[p.deporte]).join(', ');
+  const enc = paActivo(p.deporte) ? `con <b>Pago Anticipado de ${esc(CASA_SEL)}</b>` : `si juegas en ${esc(casas || 'una casa con PA')}, con <b>Pago Anticipado</b>`;
+  return `<div class="pa">${enc} (si llega a ir arriba por ${p.pa.umbral} ${uni} se paga aunque luego pierda): <b>${pct(p.pa.est)}</b> · en su historia se habría pagado ${p.pa.hits}/${p.pa.n}</div>`;
+}
+function card(p){
+  const j = J[p.juego], en = slip.some(l => l.id === p.id);
+  const cancha = p.cancha && p.cancha[1] >= 3 ? `<span>${p.clase === 'jugador' ? (p.lado === 'L' ? 'en casa' : 'de visita') : 'en su cancha'} <b>${p.cancha[0]}/${p.cancha[1]}</b></span>` : '';
+  const momio = p.momio != null
+    ? `<div class="m">${fmtM(p.momio)}</div><small>${esc(p.casa_prop || (j.momios || {}).casa || 'casa')}</small>`
+    : `<div class="m aprox">≈ ${fmtM(p.justo)}</div><small>momio justo</small>`;
+  const tt = titulo(p);
+  return `<article class="card ${p.joya ? 'joya' : ''}">
+    <div class="meta"><span class="dep ${p.deporte}">${DEP[p.deporte]}</span>
+      <span class="jg pt">${partidoHTML(j, 15)} <span>· ${esc(cuando(j))}</span></span>
+      <button class="add ${en ? 'in' : ''}" data-add="${p.id}" title="Agregar a mi parlay">${en ? '✓' : '+'}</button></div>
+    <div class="cab">${avatar(p)}<div><div class="txt">${esc(tt.t)}</div><div class="sub">${esc(tt.s)}</div></div></div>
+    ${tt.a ? `<div class="apu">${esc(tt.a)}</div>` : ''}
+    ${p.razon ? `<div class="razon">${esc(p.razon)}</div>` : ''}
+    ${paHTML(p)}
+    <div>${serieHTML(p)}<div class="cap">${p.clase === 'equipo' ? 'partidos recientes de cada equipo' : 'partidos recientes'} · el más nuevo a la derecha</div></div>
+    <div class="nums"><span>se cumplió <b>${p.hits}/${p.n}</b></span><span>últimos 5: <b>${p.h5}/${p.n5}</b></span>${cancha}</div>
+    ${p.tags && p.tags.length ? `<div class="tags">${p.tags.map(t => `<span class="tag ${t.startsWith('⚠') ? 'w' : ''}">${esc(t)}</span>`).join('')}</div>` : ''}
+    <div class="pie"><div class="prob">${pct(estDe(p))}<small>probabilidad estimada${p.pa && paActivo(p.deporte) ? ' (con PA)' : ''}</small></div><div class="momio">${momio}</div></div>
+  </article>`;
+}
+function comboHTML(c){
+  const a = P[c.a], b = P[c.b], j = J[c.juego];
+  const ambos = slip.some(l => l.id === c.a) && slip.some(l => l.id === c.b);
+  return `<article class="card combo">
+    <div class="meta"><span class="dep ${a.deporte}">${DEP[a.deporte]}</span><span class="jg pt">${partidoHTML(j, 15)} <span>· ${esc(cuando(j))}</span></span>
+      <button class="add ${ambos ? 'in' : ''}" data-combo="${c.id}" title="Agregar las dos">${ambos ? '✓' : '+'}</button></div>
+    <div class="legl">${legHTML(a)}${legHTML(b)}</div>
+    <div class="razon" style="background:var(--acb)">Pegaron <b>juntas ${c.hits}/${c.n}</b> en sus partidos recientes. Van de la mano (${c.lift.toFixed(2)}x más que si fueran independientes). En tu casa búscalas como "Crea tu apuesta" o "mismo partido".</div>
+    <div class="pie"><div class="prob">${pct(c.est)}<small>las dos juntas</small></div><div class="momio"><div class="m aprox">≈ ${fmtM(amer(1 / c.est))}</div><small>momio justo de las dos</small></div></div>
+  </article>`;
+}
+
+// ---------- panel de filtros
+function filtroHTML(){
+  if (!st.filtro) return '';
+  const ligas = [...new Set(vivos().map(j => j.liga_nombre))];
+  const ch = (k, v, t) => `<button class="chip ${FILT[k].includes(v) ? 'on' : ''}" data-fmulti="${k}|${esc(v)}">${esc(t)}</button>`;
+  return `<div class="fpanel">
+    <div class="fl"><b>Buscar</b><input type="text" data-f="q" value="${esc(FILT.q)}" placeholder="equipo o jugador (ej. Lakers, Mahomes)">
+      ${['todas', 'equipo', 'jugador'].map(c => `<button class="chip ${FILT.clase === c ? 'on' : ''}" data-fset="clase|${c}">${{todas: 'Todas', equipo: 'De equipo', jugador: 'De jugador'}[c]}</button>`).join('')}</div>
+    <div class="fl"><b>Tipo</b>${MERCADOS.map(([k, t]) => ch('mercados', k, t)).join('')}</div>
+    <div class="fl"><b>Momio</b> de <input type="number" data-f="momMin" value="${esc(FILT.momMin)}" placeholder="-650"> a <input type="number" data-f="momMax" value="${esc(FILT.momMax)}" placeholder="+500">
+      <b style="min-width:auto;margin-left:10px">Prob. mínima</b>${[0, .6, .7, .8, .9].map(v => `<button class="chip ${FILT.minProb === v ? 'on' : ''}" data-fset="minProb|${v}">${v ? Math.round(v * 100) + '%' : 'Cualquiera'}</button>`).join('')}</div>
+    <div class="fl"><b>Solo</b><label><input type="checkbox" data-fchk="soloReal" ${FILT.soloReal ? 'checked' : ''}> con momio real</label>
+      <label><input type="checkbox" data-fchk="soloPA" ${FILT.soloPA ? 'checked' : ''}> con Pago Anticipado de ${esc(CASA_SEL)}</label>
+      <label><input type="checkbox" data-fchk="sinAlertas" ${FILT.sinAlertas ? 'checked' : ''}> sin alertas (⚠)</label></div>
+    <div class="fl"><b>Ligas</b>${ligas.map(l => ch('ligas', l, l)).join('')}</div>
+    <div class="fl"><b>Ordenar</b>${[['auto', 'Recomendado'], ['prob', 'Más probable'], ['pago', 'Más paga'], ['valor', 'Más valor (vs la casa)'], ['hora', 'Por hora']].map(([k, t]) => `<button class="chip ${FILT.orden === k ? 'on' : ''}" data-fset="orden|${k}">${t}</button>`).join('')}
+      <button class="btn chico" data-flimpiar="1" style="margin-left:auto">Limpiar filtros</button></div>
+  </div>`;
+}
+
+// ---------- pestañas
+function vista(){
+  const m = $('#main');
+  if (st.tab === 'candados' || st.tab === 'joyitas'){
+    let ids = D[st.tab].filter(i => pasaFiltro(P[i]));
+    if (st.tab === 'candados') ids = ids.filter(i => momioSug(P[i]) >= MOMIO_MIN_CANDADO);
+    ids = ordenar(ids.map(i => P[i])).map(p => p.id);
+    const intro = st.tab === 'candados'
+      ? `<p class="intro"><b>Lo obvio, pero que todavía paga.</b> Se cumplió en 9 de cada 10 partidos recientes (o más), no falló en los últimos 5 y paga mejor que -650 (los de -700 para abajo no salen: casi no pagan). Para cada jugador o mercado sale la línea más alta que se sigue cumpliendo.</p>`
+      : `<p class="intro"><b>Lo que nadie está viendo.</b> Apuestas donde la casa paga más de lo que dice la historia, jugadores que rinden más cuando falta su estrella, a los que les dieron más minutos o que enfrentan a un rival que deja mucho. Muestras chicas: úsalas como 1 o 2 patas que suben el momio, no como base.</p>`;
+    let html = filtroHTML() + avisoHTML() + como() + intro + (ids.length ? `<div class="lista">${ids.map(i => card(P[i])).join('')}</div>` : `<div class="vacio">Nada con estos filtros.</div>`);
+    if (st.tab === 'joyitas'){
+      const cs = D.combos.filter(c => pasaFiltro(P[c.a]) && pasaFiltro(P[c.b]));
+      html += `<h2 class="sec">Combinadas del mismo partido</h2><p class="intro">Dos apuestas del mismo partido que en la historia del equipo pegaron juntas y se refuerzan (si pasa una, es más fácil que pase la otra).</p>`
+        + (cs.length ? `<div class="lista">${cs.map(comboHTML).join('')}</div>` : `<div class="vacio">Ninguna con estos filtros.</div>`);
+    }
+    m.innerHTML = html;
+  } else if (st.tab === 'parlays'){
+    const js = vivos().filter(j => (st.dep === 'todos' || j.tipo === st.dep) && (st.dia === 'todos' || j.dia === st.dia));
+    const quedanHoy = vivos().filter(j => j.dia === 'Hoy' && (st.dep === 'todos' || j.tipo === st.dep)).length;
+    const alcance = `<div class="alcance"><span>Armados con: <b>${st.dia === 'todos' ? 'todos los días' : esc(st.dia)}</b> · <b>${st.dep === 'todos' ? 'todos los deportes' : esc(D.deportes[st.dep])}</b>${nFiltros() ? ` · <b>${nFiltros()} filtro${nFiltros() > 1 ? 's' : ''}</b>` : ''}</span>
+      <span>Son las <b>${horaAhora()}</b>: solo partidos que no han empezado (<b>${js.length}</b>)</span>
+      <span>Casa: <b>${esc(CASA_SEL)}</b> (${esc(textoPA(CASA_SEL))})</span>
+      ${EXCL.size ? `<span>Quitaste ${EXCL.size} pata${EXCL.size > 1 ? 's' : ''} · <button class="link" data-restablecer="1">restablecer</button></span>` : ''}
+      ${st.dia === 'Hoy' && js.length && js.length < 10 ? `<span>Hoy quedan ${js.length} partidos: los parlays pueden tener hasta ${js.length} patas.</span>` : ''}</div>`;
+    let vacio = 'No hay suficientes patas con estos filtros para armar parlays.';
+    if (st.dia === 'Hoy' && !quedanHoy){
+      const man = vivos().filter(j => j.dia === 'Mañana').length;
+      vacio = `Ya no quedan partidos hoy (son las ${horaAhora()}).${man ? ` Mañana hay ${man}: dale al filtro "Mañana".` : ''}`;
+    }
+    m.innerHTML = filtroHTML() + como() + alcance + (D.odds_txt ? `<div class="aviso" style="margin-bottom:12px">${esc(D.odds_txt)}</div>` : '')
+      + `<p class="intro"><b>Armados al momento de abrir la página, mezclando deportes</b> (uno por partido para que no estén amarrados entre sí). Abajo de cada pata está <b>por qué</b> entró. Si una no te late, dale <b>×</b> y el parlay se rearma sin ella. Los momios con ≈ son aproximados: cámbialos por los de tu casa en "Mi parlay".</p>` +
+      (PLS.length ? `<div class="lista pls">${PLS.map((pl, k) => {
+        const legs = pl.legs.map(i => P[i]).sort((a, b) => J[a.juego].t - J[b.juego].t);
+        const d = legs.reduce((a, p) => a * dec(momioSug(p)), 1);
+        const prob = legs.reduce((a, p) => a * estDe(p), 1);
+        const j0 = J[legs[0].juego], j1 = J[legs[legs.length - 1].juego];
+        const floja = legs.reduce((a, p) => estDe(p) < estDe(a) ? p : a, legs[0]);
+        const reales = legs.filter(p => p.momio != null).length, joyas = legs.filter(p => p.joya).length;
+        const deps = [...new Set(legs.map(p => D.deportes[p.deporte]))];
+        const resumen = `${legs.length} patas de ${deps.join(', ')}; ${reales} con momio real de la casa${joyas ? `, ${joyas} joyita${joyas > 1 ? 's' : ''}` : ''}. Cada pata pega en promedio ${pct(Math.pow(prob, 1 / legs.length))}. La más floja: <b>${esc(textoPata(floja))}</b> (${pct(estDe(floja))}); si no te convence, quítala con ×.`;
+        return `<div class="pl"><div><h3>${esc(pl.nombre)} · ${legs.length} patas</h3><p class="d">${esc(pl.desc)}</p></div>
+          <div class="define">Empieza <b>${esc(cuando(j0, true))}</b> · se define <b>${esc(cuando(j1, true))}</b> (cobras cuando termina el último)</div>
+          <div class="resumen">${resumen}</div>
+          <div class="legl">${legs.map(p => legHTML(p, {porque: true, excluir: true})).join('')}</div>
+          <div class="res"><div>Momio<b>${fmtM(amer(d))}</b></div><div>Con ${pesos(pl.monto || apuesta)} cobras<b>${pesos((pl.monto || apuesta) * d)}</b></div><div>Prob. estimada<b>${pct(prob)}</b></div>${prob < .01 ? `<div>Pega<b>1 de ${Math.round(1 / prob).toLocaleString('es-MX')}</b></div>` : ''}</div>
+          <button class="btn pri" data-cargar="${k}">Cargar en mi parlay</button></div>`;
+      }).join('')}</div>` : `<div class="vacio">${esc(vacio)}</div>`);
+  } else if (st.tab === 'partidos'){
+    const js = vivos().filter(j => (st.dep === 'todos' || j.tipo === st.dep) && (st.dia === 'todos' || j.dia === st.dia)
+      && (!FILT.ligas.length || FILT.ligas.includes(j.liga_nombre))
+      && (!FILT.q || j.picks.some(i => pasaFILT(P[i])) || sinAcentos(j.L.nombre + ' ' + j.V.nombre).includes(sinAcentos(FILT.q))));
+    m.innerHTML = filtroHTML() + como() + (js.length ? js.map(juegoHTML).join('') : `<div class="vacio">Nada con estos filtros.</div>`);
+  } else if (st.tab === 'apuestas'){
+    m.innerHTML = apuestasHTML();
+  } else if (st.tab === 'stats'){
+    m.innerHTML = statsHTML();
+  } else {
+    m.innerHTML = historialHTML();
+  }
+}
+
+function contextoHTML(j){
+  const pv = j.previo || {}, x = [];
+  if (pv.espn && pv.espn.L != null){
+    const [a, b] = esFut(j) ? ['L', 'V'] : ['V', 'L'];
+    x.push(`ESPN: ${esc(j[a].corto)} ${Math.round(pv.espn[a])}% · ${esc(j[b].corto)} ${Math.round(pv.espn[b])}%`);
+  }
+  if (pv.h2h){
+    const ps = pv.h2h.partidos.map(p => `${p.V} ${p.Vs}-${p.Ls} ${p.L}`).join(' · ');
+    x.push(`Entre ellos: ${esc(pv.h2h.titulo)}${ps ? ' (' + esc(ps) + ')' : ''}`);
+  }
+  for (const l of ['V', 'L']){
+    const e = j[l];
+    if (e.cansado) x.push(`<b class="w">${esc(e.corto)}: ${esc(e.cansado)}</b>`);
+    else if (e.descanso != null && e.descanso <= 10 && j.tipo !== 'futbol') x.push(`${esc(e.corto)}: ${e.descanso} día${e.descanso === 1 ? '' : 's'} de descanso`);
+    if (e.portero) x.push(`Portero ${esc(e.corto)}: ${esc(e.portero.nombre)} (abrió ${e.portero.abrio} de ${e.portero.n})`);
+  }
+  if (pv.clima && !j.indoor){
+    const c = pv.clima;
+    x.push(`${j.clima_alerta ? '<b class="w">' : ''}Clima: ${esc(j.clima_txt || '')}${c.temp_c != null ? ' ' + c.temp_c + '°C' : ''}${c.rafaga_kmh != null ? ' · ráfagas ' + c.rafaga_kmh + ' km/h' : ''}${c.lluvia != null ? ' · lluvia ' + Math.round(c.lluvia) + '%' : ''}${j.clima_alerta ? '</b>' : ''}`);
+  } else if (j.indoor && j.base === 'nfl') x.push('Estadio techado');
+  if (j.arbitro_txt) x.push(`Árbitro ${esc(j.arbitro_txt)}`);
+  return x.length ? `<div class="ctx">${x.map(t => t.startsWith('<b class="w">') ? `<span class="w">${t.replace('<b class="w">', '').replace('</b>', '')}</span>` : `<span>${t}</span>`).join('')}</div>` : '';
+}
+
+function juegoHTML(j){
+  const o = j.momios || {};
+  const mov = [];
+  if (o.total_abrio && o.total && o.total_abrio !== o.total) mov.push(`total abrió ${o.total_abrio} → ${o.total}`);
+  if (o.sp_L_abrio != null && o.sp_L != null && o.sp_L_abrio !== o.sp_L) mov.push(`hándicap ${j.L.corto} abrió ${fmtM2(o.sp_L_abrio)} → ${fmtM2(o.sp_L)}`);
+  const eqOdd = (e, m) => `<span class="pt">${logo(e.logo, 14)}${esc(e.corto)} <b>${fmtM(m)}</b></span>`;
+  const odds = j.momios ? `${eqOdd(j.V, o.ml_V)}${o.ml_E ? `<span>Empate <b>${fmtM(o.ml_E)}</b></span>` : ''}${eqOdd(j.L, o.ml_L)}${o.total ? `<span>Total <b>${o.total}</b></span>` : ''}${o.sp_L != null && j.tipo !== 'futbol' ? `<span>${esc(j.L.corto)} <b>${fmtM2(o.sp_L)}</b></span>` : ''}` : '<span>sin momios aún</span>';
+  const les = ['V', 'L'].map(l => {
+    const xs = (j.lesiones[l] || []).slice(0, 7);
+    return xs.length ? `<div class="les"><span class="pt">${logo(j[l].logo, 14)}${esc(j[l].corto)}:</span> ${xs.map(x => `${esc(x.nombre)} <b>${esc(x.estado)}</b>`).join(' · ')}</div>` : '';
+  }).join('');
+  const forma = s => `<span class="fm">${[...(s || '')].reverse().map(c => `<i class="${c}">${c}</i>`).join('')}</span>`;
+  const [a, b] = esFut(j) ? [j.L, j.V] : [j.V, j.L];
+  const rows = ordenar(j.picks.map(i => P[i]).filter(pasaFILT)).map(p => {
+    const en = slip.some(l => l.id === p.id), tt = titulo(p);
+    return `<div class="row">${avatar(p, 28)}<div class="r1">${esc(p.clase === 'jugador' ? p.quien : tt.t)}<small>${esc(p.clase === 'jugador' ? p.apuesta : p.sub)}${p.pa && paActivo(p.deporte) ? ' · con PA ' + pct(p.pa.est) : ''}</small></div>
+      <div class="c hide"><b>${p.hits}/${p.n}</b></div><div class="c"><b>${pct(estDe(p))}</b></div>
+      <div class="c">${p.momio != null ? `<b>${fmtM(p.momio)}</b>` : `≈${fmtM(p.justo)}`}</div>
+      <button class="add ${en ? 'in' : ''}" data-add="${p.id}">${en ? '✓' : '+'}</button></div>`;
+  }).join('');
+  const cs = D.combos.filter(c => c.juego === j.id);
+  return `<div class="juego" id="j${j.id}"><div class="jh" data-toggle="${j.id}">
+      <span class="dep ${j.tipo}">${DEP[j.tipo]}</span>
+      <span class="equipos">${logo(a.logo, 24, '')}${rk(a)}${esc(a.nombre)} <span class="hr">${esFut(j) ? 'vs' : '@'}</span> ${logo(b.logo, 24, '')}${rk(b)}${esc(b.nombre)}</span>
+      <span class="hr">${esc(j.liga_nombre)} · <span class="cuando">${esc(cuando(j, true))}</span></span>
+      <span class="odds">${odds}</span></div>
+    <div class="jb">
+      <div class="forma"><span class="pt">Últimos 5 ${logo(a.logo, 14)}${esc(a.corto)} ${forma(a.forma)}</span><span class="pt">${logo(b.logo, 14)}${esc(b.corto)} ${forma(b.forma)}</span>${mov.length ? `<span class="mov">Movimiento: ${esc(mov.join(' · '))}</span>` : ''}</div>
+      ${contextoHTML(j)}
+      ${les}
+      ${cs.length ? `<div class="lista">${cs.map(comboHTML).join('')}</div>` : ''}
+      <div class="rows">${rows || '<div class="les">Nada con estos filtros.</div>'}</div>
+    </div></div>`;
+}
+function fmtM2(x){ return x > 0 ? '+' + x : String(x); }
+
+// ---------- mis apuestas
+function cobroDe(a, e){
+  if (a.resultado === 'cashout') return +a.cobrado || 0;
+  if (e === 'gano') return +a.monto * dec(+a.momio);
+  return 0;
+}
+function apuestasHTML(){
+  const lista = [...APS].sort((x, y) => (y.creada || '').localeCompare(x.creada || ''));
+  const estDeAp = a => a.resultado || (EST_AP[a.id] || {}).estado || 'pendiente';
+  let apostado = 0, cobrado = 0, cerradas = 0, ganadas = 0, enJuego = 0, mes = 0;
+  const ym = `${AHORA.getFullYear()}-${dos(AHORA.getMonth() + 1)}`;
+  const porCasa = {};
+  for (const a of lista){
+    const e = estDeAp(a), m = +a.monto || 0;
+    if ((a.creada || '').startsWith(ym)) mes += m;
+    if (e === 'pendiente'){ enJuego += m; continue; }
+    apostado += m; cerradas++;
+    const c = cobroDe(a, e);
+    cobrado += c;
+    if (e === 'gano' || (e === 'cashout' && c > m)) ganadas++;
+    const pc = porCasa[a.casa || 'Otra'] = porCasa[a.casa || 'Otra'] || {n: 0, neto: 0};
+    pc.n++; pc.neto += c - m;
+  }
+  const neto = cobrado - apostado, tope = +D.config.tope || 0;
+  const kpis = `<div class="kpis">
+    <div class="kpi"><small>Apostado (cerradas)</small><b>${pesos(apostado)}</b></div>
+    <div class="kpi"><small>Cobrado</small><b>${pesos(cobrado)}</b></div>
+    <div class="kpi"><small>Ganancia neta</small><b class="${neto >= 0 ? 'pos' : 'neg'}">${pesos(neto)}</b></div>
+    <div class="kpi"><small>Pegaron</small><b>${ganadas}/${cerradas}</b></div>
+    <div class="kpi"><small>En juego</small><b>${pesos(enJuego)}</b></div>
+    <div class="kpi"><small>Este mes${tope ? ' (tope ' + pesos(tope) + ')' : ''}</small><b>${pesos(mes)}</b>${tope ? `<div class="barra"><i style="width:${Math.min(100, mes / tope * 100)}%;${mes > tope ? 'background:var(--no)' : ''}"></i></div>` : ''}</div>
+    ${Object.entries(porCasa).map(([c, v]) => `<div class="kpi"><small>${esc(c)} · ${v.n} cerrada${v.n > 1 ? 's' : ''}</small><b class="${v.neto >= 0 ? 'pos' : 'neg'}">${pesos(v.neto)}</b></div>`).join('')}
+  </div>`;
+  const nota = SERVIDOR ? '' : `<div class="aviso w" style="margin-bottom:12px">Para registrar o marcar apuestas abre la página desde el acceso directo <b>Parlays</b> (así se guardan). Aquí solo se ven.</div>`;
+  const intro = `<p class="intro"><b>Tus apuestas.</b> Regístralas con "Lo metí" en Mi parlay (o pásamelas por el chat). Cada vez que corras Parlays se califican solas con los resultados de ESPN, incluido el Pago Anticipado de la casa donde la metiste. Si algo no cuadra, márcalo a mano.</p>`;
+  const cards = lista.map(a => {
+    const e = estDeAp(a), ea = EST_AP[a.id] || {}, legsE = ea.legs || [];
+    const icon = s => ({gano: '✓', gano_pa: '✓', perdio: '✗', anulada: '–', pendiente: '·', sin_dato: '?'}[s] || '·');
+    const legs = (a.legs || []).map((l, i) => {
+      const le = (l.resultado) || (legsE[i] || {}).estado || 'pendiente';
+      const val = (legsE[i] || {}).valor;
+      return `<div class="al"><span class="ic ${le}">${icon(le)}</span><div>${esc(l.texto)} <small>${l.momio != null ? fmtM(l.momio) + ' · ' : ''}${esc(l.partido || '')}${l.fecha ? ' · ' + fechaCorta(l.fecha) : ''}${val != null ? ' · quedó ' + val : ''}${le === 'gano_pa' ? ' · pagó por Pago Anticipado' : ''}</small></div></div>`;
+    }).join('');
+    const nombreE = {gano: 'Ganó', perdio: 'Perdió', pendiente: 'Pendiente', cashout: 'Cash out'}[e] || e;
+    const c = cobroDe(a, e);
+    const cob = cubrir[a.id] ? coberturaHTML(a) : '';
+    return `<div class="ap"><div class="hd"><span class="est ${e}">${nombreE}</span><b>${pesos(+a.monto || 0)}</b> a <b>${fmtM(+a.momio)}</b> · ${esc(a.casa || '')} · ${a.creada ? fechaCorta(a.creada) : ''}
+        <span style="margin-left:auto">${e === 'pendiente' ? 'cobrarías ' + pesos((+a.monto || 0) * dec(+a.momio)) : (c ? 'cobraste ' + pesos(c) : '')}</span></div>
+      ${legs}${cob}
+      ${SERVIDOR ? `<div class="btns"><button class="btn chico" data-res="${a.id}|gano">Ganó</button><button class="btn chico" data-res="${a.id}|perdio">Perdió</button><button class="btn chico" data-res="${a.id}|cashout">Cash out…</button>${a.resultado ? `<button class="btn chico" data-res="${a.id}|">Quitar marca</button>` : ''}${e === 'pendiente' ? `<button class="btn chico" data-cubrir="${a.id}">Cubrir</button>` : ''}<button class="btn chico" data-borrar="${a.id}" style="margin-left:auto;color:var(--no)">Borrar</button></div>` : ''}
+    </div>`;
+  }).join('');
+  return nota + intro + kpis + calcLibreHTML() + (cards || `<div class="vacio">Todavía no registras apuestas.</div>`);
+}
+function coberturaHTML(a){
+  const cobro = (+a.monto || 0) * dec(+a.momio);
+  const m = cubrir[a.id].momio;
+  let res = '<span>Pon el momio del otro lado de tu última pata.</span>';
+  if (Math.abs(m) >= 100){
+    const h = cobro / dec(m), gan = cobro - h - a.monto;
+    res = `<span>Apuesta <b>${pesos(h)}</b> al otro lado a ${fmtM(m)} → pase lo que pase te quedan <b class="${gan >= 0 ? 'ok' : 'no'}">${pesos(gan)}</b> de ganancia (sin cubrir: ${pesos(cobro - a.monto)} o pierdes ${pesos(a.monto)}).</span>`;
+  }
+  return `<div class="cob"><b>Calculadora de cobertura</b><span>Sirve cuando ya nada más falta la última pata. Si pega tu parlay cobras ${pesos(cobro)}.</span>
+    <span>Momio del otro lado: <input data-cobm="${a.id}" value="${m || ''}" placeholder="-150" inputmode="numeric"></span>${res}</div>`;
+}
+let LIBRE = {cobro: '', momio: '', monto: ''};
+function calcLibreHTML(){
+  const c = +LIBRE.cobro, m = +LIBRE.momio, s = +LIBRE.monto || 0;
+  let r = '';
+  if (c > 0 && Math.abs(m) >= 100){
+    const h = c / dec(m);
+    r = `<span>Apuesta <b>${pesos(h)}</b> al otro lado → te quedan <b class="${c - h - s >= 0 ? 'ok' : 'no'}">${pesos(c - h - s)}</b> pase lo que pase.</span>`;
+  }
+  return `<details class="como"><summary>Calculadora de cobertura (cualquier parlay)</summary><div class="cob" style="margin-top:8px">
+    <span>Si pega cobras: <input data-libre="cobro" value="${LIBRE.cobro}" placeholder="1000"> · lo que apostaste: <input data-libre="monto" value="${LIBRE.monto}" placeholder="50"> · momio del otro lado: <input data-libre="momio" value="${LIBRE.momio}" placeholder="-150"></span>${r}</div></details>`;
+}
+
+// ---------- stats e IA
+const DEP_TR = {nfl: 'NFL', nba: 'NBA', nhl: 'NHL', ncaaf: 'NCAA americano', ncaab: 'NCAA básquet'};
+const EJEMPLOS = ['¿Cuántas yardas por tierra permite la defensa de los Chiefs?', '¿Qué equipos de la NBA permiten más triples?', '¿Cómo viene Luka Doncic en sus últimos partidos?', '¿Qué tal pinta el Eagles vs Cowboys para el total?'];
+const normEq = s => sinAcentos(s).replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(Boolean);
+function juegaPronto(slug){
+  const a = new Set(normEq(String(slug).replace(/-/g, ' ')));
+  return vivos().some(j => [j.L.nombre, j.V.nombre].some(n => { const b = normEq(n); const comunes = b.filter(w => a.has(w)).length; return comunes >= 2 && comunes >= Math.min(a.size, b.length) - 1; }));
+}
+const md = t => esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+function statsHTML(){
+  if (!SERVIDOR) return `<div class="aviso w">Stats e IA necesitan la ventanita de Parlays: abre la página desde el acceso directo <b>Parlays</b>.</div>`;
+  const e = IA.estado;
+  let setup = '';
+  if (e && (!e.sdk || !e.clave)) setup = `<div class="aviso w">La IA integrada está apagada (cuesta centavos de dólar por pregunta). Por ahora pregúntale a <b>Claude en el chat de VS Code</b>: lee TeamRankings, ESPN y los datos de esta app. Las tablas de TeamRankings de abajo funcionan gratis. Si algún día la quieres prender: clave en console.anthropic.com → <b>datos/config.json</b> y <b>python -m pip install anthropic</b>.</div>`;
+  const conv = IA.conv.map(x => `<div class="burbuja q">${esc(x.p)}</div>` + (x.r ? `<div class="burbuja r">${md(x.r)}${x.meta ? `<small>${x.meta}</small>` : ''}</div>` : x.error ? `<div class="aviso no">${esc(x.error)}</div>` : '')).join('');
+  const tabla = TR.tabla;
+  let tablaHTML = '';
+  if (tabla){
+    const filas = tabla.filas.filter(f => !TR.soloSemana || juegaPronto(f.slug));
+    tablaHTML = `<div class="fila" style="justify-content:flex-start;gap:12px;flex-wrap:wrap"><b style="font-size:15px">${esc(tabla.es)}</b><span>${esc(tabla.nombre)} · <a href="${esc(tabla.url)}" target="_blank" rel="noopener" style="color:var(--ac)">TeamRankings</a></span>
+      <label style="margin-left:auto;display:inline-flex;gap:5px;align-items:center"><input type="checkbox" id="tr-semana" ${TR.soloSemana ? 'checked' : ''}> solo equipos que juegan pronto</label></div>
+      <table class="t"><tr><th>#</th><th>Equipo</th>${tabla.columnas.map(c => `<th class="r">${esc(c)}</th>`).join('')}</tr>
+      ${filas.map(f => `<tr class="${juegaPronto(f.slug) ? 'mio' : ''}"><td>${esc(f.rank)}</td><td>${esc(f.equipo)}</td>${f.valores.map(v => `<td class="r">${esc(v)}</td>`).join('')}</tr>`).join('')}</table>
+      <div class="cap">Resaltados: equipos que juegan en los próximos días. En tablas de "Rival", el #1 es el que menos permite.</div>`;
+  }
+  return `<div class="caja"><b style="font-size:16px">Pregúntale a la IA</b>
+      <span class="intro" style="margin:0">Pregunta lo que quieras de stats en español. Busca en TeamRankings y en el historial de ESPN de la app, y te contesta con números.</span>
+      ${setup}${conv}
+      <textarea id="ia-q" placeholder="Ej: ¿Cuántas yardas por tierra permite la defensa de los Chiefs?">${esc(IA.q)}</textarea>
+      <div class="btns"><button class="btn oro" id="ia-ir" ${IA.cargando ? 'disabled' : ''}>${IA.cargando ? 'Buscando… (TeamRankings pide 10 s entre tablas)' : 'Preguntar'}</button>${IA.conv.length ? '<button class="btn" id="ia-borrar" style="flex:none">Nueva plática</button>' : ''}</div>
+      <div class="trres">${EJEMPLOS.map(t => `<button data-ejemplo="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>
+    <h2 class="sec">Stats de TeamRankings (gratis, sin IA)</h2>
+    <div class="caja">
+      <div class="btns" style="align-items:center"><select id="tr-dep">${Object.entries(DEP_TR).map(([k, v]) => `<option value="${k}" ${TR.dep === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        <input type="text" id="tr-q" value="${esc(TR.q)}" placeholder="¿Qué stat? Ej: yardas por tierra que permite, puntos por partido, triples" style="flex:1;min-width:220px">
+        <button class="btn pri" id="tr-ir" style="flex:none" ${TR.cargando ? 'disabled' : ''}>Buscar</button></div>
+      ${TR.cargando ? `<div class="aviso">${esc(TR.cargando)}</div>` : ''}${TR.msg ? `<div class="aviso w">${esc(TR.msg)}</div>` : ''}
+      ${TR.res.length ? `<div class="trres">${TR.res.map(s => `<button data-trslug="${esc(s.slug)}" class="${tabla && tabla.slug === s.slug ? 'on' : ''}">${esc(s.es)}<small>${esc(s.nombre)}</small></button>`).join('')}</div>` : ''}
+      ${tablaHTML}
+    </div>`;
+}
+async function preguntarIA(){
+  const q = ($('#ia-q') || {}).value || IA.q;
+  if (!q.trim() || IA.cargando) return;
+  IA.q = ''; IA.cargando = true;
+  const previas = IA.conv.filter(x => x.r).slice(-2).map(x => ({p: x.p, r: x.r}));
+  const item = {p: q.trim()};
+  IA.conv.push(item); render();
+  try {
+    const r = await (await fetch('/api/preguntar', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({pregunta: q, previas})})).json();
+    if (r.error) item.error = r.error;
+    else { item.r = r.respuesta; item.meta = `${(r.fuentes || []).map(f => f.startsWith('http') ? `<a href="${esc(f)}" target="_blank" rel="noopener" style="color:var(--ac)">TeamRankings</a>` : esc(f)).join(' · ')}${r.costo_usd != null ? ` · costó ≈ US$${r.costo_usd.toFixed(3)}` : ''}`; }
+  } catch { item.error = 'No se pudo preguntar: ¿está abierta la ventanita de Parlays?'; }
+  IA.cargando = false; render();
+}
+async function buscarTR(){
+  TR.q = ($('#tr-q') || {}).value || TR.q; TR.dep = ($('#tr-dep') || {}).value || TR.dep;
+  if (!TR.q.trim()) return;
+  TR.cargando = 'Buscando en TeamRankings… (la primera vez de cada deporte tarda ~10 s)'; TR.msg = ''; render();
+  try {
+    const r = await (await fetch(`/api/tr/buscar?dep=${encodeURIComponent(TR.dep)}&q=${encodeURIComponent(TR.q)}`)).json();
+    TR.res = r.stats || [];
+    if (!TR.res.length) TR.msg = 'No encontré esa estadística. Prueba con otras palabras (ej. "yardas por tierra que permite").';
+    TR.cargando = ''; render();
+    if (TR.res.length) await leerTR(TR.res[0].slug);
+  } catch { TR.cargando = ''; TR.msg = 'No se pudo consultar TeamRankings.'; render(); }
+}
+async function leerTR(slug){
+  TR.cargando = 'Trayendo la tabla de TeamRankings… (pide 10 s entre consultas)'; render();
+  try {
+    const r = await fetch(`/api/tr/stat?dep=${encodeURIComponent(TR.dep)}&slug=${encodeURIComponent(slug)}`);
+    const d = await r.json();
+    if (d.error) TR.msg = d.error; else TR.tabla = d;
+  } catch { TR.msg = 'No se pudo leer la tabla.'; }
+  TR.cargando = ''; render();
+}
+
+// ---------- historial
+function historialHTML(){
+  const H = D.historial;
+  if (!H || !H.total || !H.total.n){
+    return `<p class="intro"><b>¿Atina la página?</b> Cada día se guardan los candados, las joyitas y los parlays armados, y se califican solos cuando terminan los partidos.</p>
+      <div class="vacio">Todavía no hay resultados${H && H.pendientes ? ` (hay ${H.pendientes} apuestas esperando a que terminen sus partidos)` : ''}. Vuelve a correr Parlays mañana y aquí verás qué tanto pegó cada cosa.</div>`;
+  }
+  const fila = (nom, g) => `<tr><td>${esc(nom)}</td><td class="r">${g.n}</td><td class="r">${g.g}</td><td class="r"><b class="${g.pct >= g.est - .03 ? 'ok' : 'no'}">${pct(g.pct)}</b></td><td class="r">${pct(g.est)}</td></tr>`;
+  const tabla = (titulo, filas) => `<table class="t"><tr><th>${titulo}</th><th class="r">Calificadas</th><th class="r">Pegaron</th><th class="r">Real</th><th class="r">La página decía</th></tr>${filas}</table>`;
+  const pls = (H.parlays || []).map(p => `<div class="al"><span class="ic ${p.estado}">${{gano: '✓', perdio: '✗', pendiente: '·'}[p.estado]}</span><div><b>${esc(p.nombre)}</b> ${fmtM(amer(p.dec))} <small>· ${esc(p.fecha)} · ${p.legs.filter(e => e === 'gano' || e === 'gano_pa').length}/${p.legs.length} patas pegaron</small></div></div>`).join('');
+  const porPl = (H.por_parlay || []).map(x => `<tr><td>${esc(x.nombre)}</td><td class="r">${x.n}</td><td class="r">${x.g}</td><td class="r"><b class="${x.neto >= 0 ? 'ok' : 'no'}">${pesos(x.neto)}</b></td></tr>`).join('');
+  const rec = (H.recientes || []).map(r => `<div class="al"><span class="ic ${r.estado}">${{gano: '✓', perdio: '✗', anulada: '–'}[r.estado]}</span><div>${esc(r.texto)} <small>· ${esc(r.partido)} · ${fechaCorta(r.fecha)}${r.valor != null ? ' · quedó ' + r.valor : ''} · decía ${pct(r.est)}${r.pa && r.estado === 'perdio' ? ' · con PA sí pagaba' : ''}</small></div></div>`).join('');
+  return `<p class="intro"><b>¿Atina la página?</b> Lo que recomendó y cómo terminó. Si "Real" sale parecido a "La página decía", las probabilidades son de fiar. Muestras chicas al principio: dale unas semanas.</p>
+    <div class="kpis"><div class="kpi"><small>Calificadas</small><b>${H.total.n}</b></div><div class="kpi"><small>Pegaron</small><b>${pct(H.total.pct)}</b></div><div class="kpi"><small>La página decía</small><b>${pct(H.total.est)}</b></div><div class="kpi"><small>Esperando resultado</small><b>${H.pendientes}</b></div>
+    ${H.pa && H.pa.ganadores ? `<div class="kpi"><small>Pago Anticipado salvó</small><b>${H.pa.salvadas}/${H.pa.ganadores}</b></div>` : ''}</div>
+    ${tabla('Tipo', H.por_cat.map(x => fila(x.cat, x)).join(''))}
+    <h2 class="sec">Por deporte</h2>${tabla('Deporte', H.por_dep.map(x => fila(D.deportes[x.dep] || x.dep, x)).join(''))}
+    <h2 class="sec">Por nivel de confianza</h2><p class="intro">Si las de 80–90% pegan 80–90%, la página está bien calibrada.</p>${tabla('La página decía', H.calib.map(x => fila(x.rango, x)).join(''))}
+    ${porPl ? `<h2 class="sec">Parlays armados</h2><table class="t"><tr><th>Parlay</th><th class="r">Jugados</th><th class="r">Pegaron</th><th class="r">Con $100 a cada uno</th></tr>${porPl}</table><div style="margin-top:10px">${pls}</div>` : ''}
+    <h2 class="sec">Últimas calificadas</h2>${rec}`;
+}
+
+function avisoHTML(){ return D.aviso ? `<div class="aviso w" style="margin-bottom:12px">${esc(D.aviso)}</div>` : ''; }
+function como(){
+  return `<details class="como"><summary>¿Cómo leer esto?</summary><ul>
+    <li><b>Cuadritos</b>: lo que pasó en cada partido reciente (verde = se cumplió). En apuestas de partido salen las dos filas: una por equipo.</li>
+    <li><b>Probabilidad estimada</b>: la historia, ajustada hacia lo que dice la casa cuando hay momio, y en jugadores también por lo que permite el rival. No es garantía.</li>
+    <li><b>Casa y Pago Anticipado</b>: elige tu casa arriba. Playdoit y Draftea: NBA 20 pts, NFL 17, NHL 3 goles y fútbol 2 goles; Caliente: NBA, NFL y fútbol (sin NHL); Stake no se cuenta. Si tu equipo llega a ir arriba por esa diferencia, el "a ganar" se paga aunque luego pierda.</li>
+    <li><b>Súper PA / PA1</b> (fútbol): mercado aparte donde con ir ganando por 1 gol se paga. Sale como "Gana X (Súper PA)"; su momio es aproximado.</li>
+    <li><b>Momio justo (≈)</b>: lo que debería pagar según la historia. Si tu casa paga <b>más</b> que eso, vale la pena; si paga menos, no.</li>
+    <li>Momios reales de DraftKings vía ESPN; en tu casa pueden variar un poco. Cámbialos en "Mi parlay".</li>
+    <li>Entre más patas, más difícil que pegue: 10 patas de 85% pegan ~1 de cada 5.</li></ul></details>`;
+}
+
+// ---------- mi parlay
+function guardar(){ localStorage.setItem('parlay_slip_v2', JSON.stringify(slip)); localStorage.setItem('parlay_apuesta', apuesta); }
+function agregar(id, quitarSiEsta = true, sinRender = false){
+  const k = slip.findIndex(l => l.id === id);
+  if (k >= 0){ if (quitarSiEsta) slip.splice(k, 1); }
+  else {
+    const p = P[id], j = J[p.juego];
+    slip.push({id, texto: textoPata(p), juego: p.juego, jn: `${DEP[p.deporte]} · ${nomJuego(j)}`,
+               cuando: cuando(j, true), orden: j.fecha, est: estDe(p), momio: momioSug(p), aprox: p.momio == null,
+               regla: p.regla, liga: j.liga, sport: j.sport, base: j.base, tipo: j.tipo, fecha: j.fecha, partido: nomJuego(j), pa: !!p.pa});
+    slip.sort((x, y) => (x.orden || '').localeCompare(y.orden || ''));
+  }
+  guardar(); if (!sinRender) render();
+}
+// completa tu parlay con las patas que más pagan por el riesgo hasta llegar a lo que quieres cobrar
+function completar(){
+  const meta = parseFloat(String(metaCompletar).replace(/[^\d.]/g, ''));
+  if (!meta || !apuesta) { msgCompletar = 'Pon cuánto quieres cobrar.'; render(); return; }
+  let d = slip.reduce((a, l) => a * dec(l.momio), 1);
+  const objetivo = meta / apuesta;
+  if (d >= objetivo) { msgCompletar = `Ya llegas: con ${pesos(apuesta)} cobras ${pesos(apuesta * d)}.`; render(); return; }
+  const juegos = new Set(slip.map(l => l.juego)), cuenta = {};
+  const pool = poolParlays().filter(p => !juegos.has(p.juego));
+  let n = 0;
+  while (d < objetivo && n < 15){
+    let mejor = null, mv = -Infinity;
+    for (const p of pool){
+      if (juegos.has(p.juego) || estDe(p) < .55) continue;
+      const v = rDe(p) - .15 * (cuenta[p.deporte] || 0);
+      if (v > mv){ mv = v; mejor = p; }
+    }
+    if (!mejor) break;
+    agregar(mejor.id, false, true); juegos.add(mejor.juego); cuenta[mejor.deporte] = (cuenta[mejor.deporte] || 0) + 1;
+    d *= dec(momioSug(mejor)); n++;
+  }
+  msgCompletar = d >= objetivo ? `Listo: le agregué ${n} pata${n === 1 ? '' : 's'}. Con ${pesos(apuesta)} cobras ${pesos(apuesta * d)}.` : `Solo llegué a ${pesos(apuesta * d)} con las patas que pasan tus filtros.`;
+  render();
+}
+function slipHTML(){
+  if (!slip.length) return `<h2>Mi parlay</h2><p class="hint">Dale <b>+</b> a cualquier apuesta para meterla aquí. Puedes mezclar deportes, o pon cuánto quieres cobrar y lo armo:</p>
+    <div class="fila"><span>Quiero cobrar</span><input id="meta" value="${esc(metaCompletar)}" placeholder="$1,000" inputmode="numeric"></div>
+    <div class="fila"><span>Apostando</span><input id="apuesta" value="${apuesta}" inputmode="numeric"></div>
+    <button class="btn oro" id="completar" style="margin-top:6px">Armármelo</button>${msgCompletar ? `<div class="aviso" style="margin-top:8px">${esc(msgCompletar)}</div>` : ''}`;
+  const d = slip.reduce((a, l) => a * dec(l.momio), 1);
+  const prob = slip.reduce((a, l) => a * (P[l.id] ? estDe(P[l.id]) : l.est), 1);
+  const justo = 1 / prob;
+  const juegos = slip.map(l => l.juego);
+  const repetido = juegos.length !== new Set(juegos).size;
+  const n = Math.round(1 / prob);
+  const u = slip[slip.length - 1], ju = J[u.juego];
+  const casaDef = CASAS.includes(CASA_SEL) ? CASA_SEL : 'Otra';
+  const form = registrando ? `<div class="form"><b style="font-size:13px">Registrar en Mis apuestas</b>
+      <div class="fila"><span>Casa</span><select id="r-casa">${[...CASAS, 'Otra'].map(c => `<option ${c === casaDef ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      <div class="fila"><span>Apostaste</span><input id="r-monto" value="${apuesta}" inputmode="numeric"></div>
+      <div class="fila"><span>Momio total que te dio la casa</span><input id="r-momio" value="${fmtM(amer(d))}" inputmode="numeric"></div>
+      <div class="btns"><button class="btn oro" id="r-ok">Guardar</button><button class="btn" id="r-no">Cancelar</button></div></div>` : '';
+  return `<h2>Mi parlay · ${slip.length} pata${slip.length > 1 ? 's' : ''}</h2>
+    <p class="hint">Cambia los momios por los de tu casa (los punteados son aproximados).</p>
+    <div class="legs">${slip.map((l, i) => { const jj = J[l.juego]; return `<div class="leg">${P[l.id] ? avatar(P[l.id], 30) : '<span></span>'}<div class="lt">${esc(l.texto)}</div>
+      <input class="${l.aprox ? 'aprox' : ''}" data-mi="${i}" value="${fmtM(l.momio)}" inputmode="numeric">
+      <button class="x" data-quitar="${i}" title="Quitar">×</button><div class="lj"><span class="cuando">${esc(jj ? cuando(jj, true) : (l.cuando || ''))}</span>${jj && !jj.vivo ? ' <span class="tag ya">ya empezó</span>' : ''} · ${esc(l.jn)} · ${pct(P[l.id] ? estDe(P[l.id]) : l.est)}</div></div>`; }).join('')}</div>
+    <div class="define" style="margin-top:8px">Se define <b>${esc(ju ? cuando(ju, true) : (u.cuando || ''))}</b> (cobras cuando termina el último)</div>
+    <div class="tot">
+      <div class="fila"><span>Momio total</span><b class="big">${fmtM(amer(d))}</b></div>
+      <div class="fila"><span>Apuesta</span><input id="apuesta" value="${apuesta}" inputmode="numeric"></div>
+      <div class="fila"><span>Ganancia</span><b>${pesos(apuesta * (d - 1))}</b></div>
+      <div class="fila"><span>Cobras en total</span><b>${pesos(apuesta * d)}</b></div>
+      <div class="fila"><span>Prob. estimada${slip.some(l => P[l.id] && P[l.id].pa && paActivo(P[l.id].deporte)) ? ' (con PA)' : ''}</span><b>${pct(prob)} · 1 de cada ${n.toLocaleString('es-MX')}</b></div>
+      ${d >= justo ? `<div class="aviso ok">La casa paga más de lo que dice la historia (justo sería ${fmtM(amer(justo))}).</div>`
+                   : `<div class="aviso">La casa paga menos de lo que dice la historia (justo sería ${fmtM(amer(justo))}). Normal en parlays largos: cada pata le deja margen a la casa.</div>`}
+      ${repetido ? `<div class="aviso w">Tienes dos patas del mismo partido: van amarradas y algunas casas solo las dejan juntar en "Crea tu apuesta".</div>` : ''}
+      <div class="fila"><span>Completar hasta cobrar</span><input id="meta" value="${esc(metaCompletar)}" placeholder="$1,000" inputmode="numeric"></div>
+      <button class="btn" id="completar">Completar mi parlay</button>${msgCompletar ? `<div class="aviso">${esc(msgCompletar)}</div>` : ''}
+      <div class="btns">${PUBLICO ? '' : `<button class="btn oro" id="lometi" ${SERVIDOR ? '' : 'disabled title="Abre la página desde el acceso directo Parlays"'}>Lo metí</button>`}<button class="btn pri" id="copiar">Copiar${PUBLICO ? ' para WhatsApp' : ''}</button><button class="btn" id="vaciar">Vaciar</button></div>
+      ${form}
+    </div>`;
+}
+
+// ---------- servidor (guardar apuestas, stats, IA, actualizar)
+async function api(ruta, body){
+  const r = await fetch(ruta, body ? {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)} : {});
+  if (!r.ok) throw new Error('servidor');
+  const d = await r.json();
+  APS = d.apuestas || APS; EST_AP = d.estado || EST_AP;
+  return d;
+}
+if (SERVIDOR){
+  $('#act').style.display = '';
+  api('/api/apuestas').then(render).catch(() => {});
+  fetch('/api/ia/estado').then(r => r.json()).then(e => { IA.estado = e; if (st.tab === 'stats') render(); }).catch(() => {});
+}
+
+function render(){
+  const vv = vivos();
+  $('#fecha').textContent = `Son las ${horaAhora()} · ${vv.length} partidos por jugar · datos de ${D.titulo}${PUBLICO ? ' (se actualiza cada 2 h, de 8 am a medianoche)' : ''}`;
+  if (PUBLICO && ['stats', 'apuestas'].includes(st.tab)) st.tab = 'candados';
+  const deps = ['todos', ...['nba', 'nfl', 'nhl', 'futbol', 'ncaab', 'ncaaf'].filter(t => vv.some(j => j.tipo === t))];
+  const dias = ['todos', ...[...new Set(vv.map(j => j.dia))]];
+  if (!dias.includes(st.dia) && st.dia !== 'Hoy') st.dia = 'todos';
+  if (!deps.includes(st.dep)) st.dep = 'todos';
+  const nHoy = vv.filter(j => j.dia === 'Hoy').length;
+  $('#hoy').innerHTML = `⚡ Armar parlay de hoy<small>${nHoy ? nHoy + ' partidos' : 'ya no hay'}</small>`;
+  $('#hoy').disabled = !nHoy;
+  PLS = construirParlays();
+  $('#filtros').innerHTML = deps.map(t => `<button class="chip ${st.dep === t ? 'on' : ''}" data-dep="${t}">${t === 'todos' ? 'Todos' : D.deportes[t]}</button>`).join('')
+    + '<span class="sep"></span>' + dias.map(t => `<button class="chip ${st.dia === t ? 'on' : ''}" data-dia="${t}">${t === 'todos' ? 'Todos los días' : t}</button>`).join('')
+    + `<span class="sep"></span><span class="casa">Casa <select id="casa">${[...CASAS, 'Sin PA'].map(c => `<option ${c === CASA_SEL ? 'selected' : ''}>${c}</option>`).join('')}</select><small>${esc(textoPA(CASA_SEL))}</small></span>`;
+  const cnt = k => D[k].filter(i => pasaFiltro(P[i]) && (k !== 'candados' || momioSug(P[i]) >= MOMIO_MIN_CANDADO)).length;
+  const pend = APS.filter(a => !(a.resultado || (EST_AP[a.id] || {}).estado) || (a.resultado || (EST_AP[a.id] || {}).estado) === 'pendiente').length;
+  $('#tabs').innerHTML = [['candados', 'Candados', cnt('candados')], ['joyitas', 'Joyitas', cnt('joyitas')], ['parlays', 'Parlays armados', PLS.length],
+    ['partidos', 'Por partido', vv.filter(j => (st.dep === 'todos' || j.tipo === st.dep) && (st.dia === 'todos' || j.dia === st.dia)).length],
+    ['stats', 'Stats e IA', ''], ['apuestas', 'Mis apuestas', pend ? pend + ' en juego' : APS.length], ['historial', 'Historial', D.historial && D.historial.total ? D.historial.total.n : 0]]
+    .filter(([k]) => !PUBLICO || !['stats', 'apuestas'].includes(k))
+    .map(([k, t, n]) => `<button class="tab ${st.tab === k ? 'on' : ''}" data-tab="${k}">${t}<span class="n">${n}</span></button>`).join('');
+  const nf = nFiltros();
+  $('#filbtn').textContent = `⚙ Filtrar${nf ? ' (' + nf + ')' : ''}`;
+  $('#filbtn').classList.toggle('on', st.filtro || !!nf);
+  const abiertos = [...document.querySelectorAll('.juego.open')].map(e => e.id);
+  const foco = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.f;
+  vista();
+  abiertos.forEach(id => document.getElementById(id)?.classList.add('open'));
+  if (foco){ const el = document.querySelector(`[data-f="${foco}"]`); if (el){ el.focus(); el.setSelectionRange?.(el.value.length, el.value.length); } }
+  $('#slip').innerHTML = slipHTML();
+  const d = slip.reduce((a, l) => a * dec(l.momio), 1);
+  $('#fab').innerHTML = `<span>Mi parlay (${slip.length})</span><span>${slip.length ? fmtM(amer(d)) + ' · cobras ' + pesos(apuesta * d) : 'vacío'}</span>`;
+}
+
+document.addEventListener('click', async e => {
+  const t = e.target.closest('[data-add],[data-combo],[data-dep],[data-dia],[data-tab],[data-toggle],[data-quitar],[data-cargar],[data-res],[data-borrar],[data-cubrir],[data-excluir],[data-restablecer],[data-fset],[data-fmulti],[data-flimpiar],[data-ejemplo],[data-trslug],#copiar,#vaciar,#fab,#hoy,#lometi,#r-ok,#r-no,#filbtn,#completar,#act,#ia-ir,#ia-borrar,#tr-ir');
+  if (!t) return;
+  if (t.id === 'hoy') { fechar(); st.dia = 'Hoy'; st.tab = 'parlays'; render(); scrollTo(0, 0); }
+  else if (t.id === 'filbtn') { st.filtro = !st.filtro; render(); }
+  else if (t.dataset.fset) { const [k, v] = t.dataset.fset.split('|'); FILT[k] = k === 'minProb' ? +v : v; guardarFiltros(); render(); }
+  else if (t.dataset.fmulti) { const [k, v] = t.dataset.fmulti.split('|'); FILT[k] = FILT[k].includes(v) ? FILT[k].filter(x => x !== v) : [...FILT[k], v]; guardarFiltros(); render(); }
+  else if (t.dataset.flimpiar) { FILT = {...FILT0}; guardarFiltros(); render(); }
+  else if (t.dataset.excluir) { EXCL.add(t.dataset.excluir); guardarExcl(); render(); }
+  else if (t.dataset.restablecer) { EXCL.clear(); guardarExcl(); render(); }
+  else if (t.dataset.add) agregar(t.dataset.add);
+  else if (t.dataset.combo) { const c = D.combos.find(x => x.id === t.dataset.combo); agregar(c.a, false, true); agregar(c.b, false); }
+  else if (t.dataset.dep) { st.dep = t.dataset.dep; render(); }
+  else if (t.dataset.dia) { st.dia = t.dataset.dia; render(); }
+  else if (t.dataset.tab) { st.tab = t.dataset.tab; render(); scrollTo(0, 0); }
+  else if (t.dataset.toggle) document.getElementById('j' + t.dataset.toggle).classList.toggle('open');
+  else if (t.dataset.quitar) { slip.splice(+t.dataset.quitar, 1); guardar(); render(); }
+  else if (t.dataset.cargar) {
+    slip = [];
+    const pl = PLS[+t.dataset.cargar];
+    if (pl.monto) apuesta = pl.monto;
+    pl.legs.forEach(id => agregar(id, false, true));
+    render();
+    if (innerWidth <= 980) $('#slip').classList.add('abierta');
+  }
+  else if (t.id === 'completar') { metaCompletar = ($('#meta') || {}).value || metaCompletar; completar(); }
+  else if (t.id === 'vaciar') { slip = []; registrando = false; msgCompletar = ''; guardar(); render(); }
+  else if (t.id === 'fab') $('#slip').classList.toggle('abierta');
+  else if (t.id === 'lometi') { registrando = true; render(); }
+  else if (t.id === 'r-no') { registrando = false; render(); }
+  else if (t.id === 'r-ok') {
+    const monto = parseFloat(String($('#r-monto').value).replace(/[^\d.]/g, '')) || 0;
+    const momio = parseInt(String($('#r-momio').value).replace(/[^\d-]/g, ''), 10);
+    if (!monto || Math.abs(momio) < 100) { alertaSlip('Revisa el monto y el momio.'); return; }
+    const casa = $('#r-casa').value;
+    const body = {creada: new Date().toISOString(), casa, monto, momio,
+      legs: slip.map(l => ({texto: l.texto, juego: l.juego, liga: l.liga, sport: l.sport, base: l.base, tipo: l.tipo,
+                            fecha: l.fecha, partido: l.partido, regla: l.regla, momio: l.momio, pa: l.pa}))};
+    try { await api('/api/apuestas', body); registrando = false; st.tab = 'apuestas'; render(); scrollTo(0, 0); }
+    catch { alertaSlip('No se pudo guardar: ¿está abierta la ventanita de Parlays?'); }
+  }
+  else if (t.dataset.res) {
+    const [id, res] = t.dataset.res.split('|');
+    let campos = {resultado: res || null, cobrado: null};
+    if (res === 'cashout'){
+      const v = prompt('¿Cuánto cobraste con el cash out?');
+      if (v == null) return;
+      campos.cobrado = parseFloat(String(v).replace(/[^\d.]/g, '')) || 0;
+    }
+    try { await api('/api/apuestas/actualizar', {id, campos}); render(); } catch {}
+  }
+  else if (t.dataset.borrar) {
+    if (!confirm('¿Borrar esta apuesta de tu registro?')) return;
+    try { await api('/api/apuestas/borrar', {id: t.dataset.borrar}); render(); } catch {}
+  }
+  else if (t.dataset.cubrir) { const id = t.dataset.cubrir; if (cubrir[id]) delete cubrir[id]; else cubrir[id] = {momio: ''}; render(); }
+  else if (t.id === 'copiar') {
+    const d = slip.reduce((a, l) => a * dec(l.momio), 1);
+    const txt = slip.map((l, i) => `${i + 1}. ${l.texto} (${fmtM(l.momio)}) — ${l.cuando ? l.cuando + ' · ' : ''}${l.jn}`).join('\n') + `\nMomio total ${fmtM(amer(d))} · ${pesos(apuesta)} → ${pesos(apuesta * d)}`;
+    navigator.clipboard.writeText(txt).then(() => { t.textContent = '¡Copiado!'; setTimeout(() => t.textContent = 'Copiar', 1500); });
+  }
+  else if (t.id === 'act') {
+    t.disabled = true; t.textContent = '⏳ Actualizando… (30 s a unos minutos)';
+    try {
+      const r = await (await fetch('/api/actualizar', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})).json();
+      if (r.ok) location.reload();
+      else { t.disabled = false; t.textContent = '🔄 Actualizar'; alertaGeneral(r.error || 'No se pudo actualizar.'); }
+    } catch { t.disabled = false; t.textContent = '🔄 Actualizar'; alertaGeneral('No se pudo actualizar: ¿está abierta la ventanita de Parlays?'); }
+  }
+  else if (t.id === 'ia-ir') preguntarIA();
+  else if (t.id === 'ia-borrar') { IA.conv = []; render(); }
+  else if (t.dataset.ejemplo) { IA.q = t.dataset.ejemplo; render(); $('#ia-q')?.focus(); }
+  else if (t.id === 'tr-ir') buscarTR();
+  else if (t.dataset.trslug) leerTR(t.dataset.trslug);
+});
+function alertaSlip(msg){ const f = document.querySelector('.form'); if (f){ let a = f.querySelector('.aviso'); if (!a){ a = document.createElement('div'); a.className = 'aviso no'; f.appendChild(a); } a.textContent = msg; } }
+function alertaGeneral(msg){ const m = $('#main'); const a = document.createElement('div'); a.className = 'aviso no'; a.style.marginBottom = '12px'; a.textContent = msg; m.prepend(a); }
+let tFiltro = null;
+document.addEventListener('input', e => {
+  if (e.target.dataset.f === 'q'){ FILT.q = e.target.value; guardarFiltros(); clearTimeout(tFiltro); tFiltro = setTimeout(render, 250); }
+  else if (e.target.id === 'ia-q') IA.q = e.target.value;
+  else if (e.target.id === 'meta') metaCompletar = e.target.value;
+});
+document.addEventListener('keydown', e => {
+  if (e.target.id === 'ia-q' && e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); preguntarIA(); }
+  if (e.target.id === 'tr-q' && e.key === 'Enter'){ e.preventDefault(); buscarTR(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.mi) {
+    const v = parseInt(String(t.value).replace(/[^\d-]/g, ''), 10);
+    const l = slip[+t.dataset.mi];
+    if (Math.abs(v) >= 100) { l.momio = v; l.aprox = false; }
+    guardar(); render();
+  } else if (t.id === 'apuesta') {
+    apuesta = Math.max(1, parseFloat(String(t.value).replace(/[^\d.]/g, '')) || 50); guardar(); render();
+  } else if (t.id === 'casa') {
+    CASA_SEL = t.value; localStorage.setItem('parlay_casa', JSON.stringify(CASA_SEL));
+    slip.forEach(l => { if (P[l.id] && P[l.id].momio == null) l.momio = momioSug(P[l.id]); }); guardar(); render();
+  } else if (t.dataset.f === 'momMin' || t.dataset.f === 'momMax') {
+    FILT[t.dataset.f] = t.value === '' ? '' : String(parseInt(t.value, 10) || ''); guardarFiltros(); render();
+  } else if (t.dataset.fchk) {
+    FILT[t.dataset.fchk] = t.checked; guardarFiltros(); render();
+  } else if (t.dataset.cobm) {
+    cubrir[t.dataset.cobm] = {momio: parseInt(String(t.value).replace(/[^\d-]/g, ''), 10) || ''}; render();
+  } else if (t.dataset.libre) {
+    LIBRE[t.dataset.libre] = String(t.value).replace(/[^\d.-]/g, ''); render();
+  } else if (t.id === 'tr-semana') { TR.soloSemana = t.checked; render(); }
+  else if (t.id === 'tr-dep') { TR.dep = t.value; TR.res = []; TR.tabla = null; render(); }
+});
+document.addEventListener('click', e => {
+  if (innerWidth <= 980 && $('#slip').classList.contains('abierta') && !e.target.closest('#slip,#fab,[data-add],[data-cargar],[data-combo]')) $('#slip').classList.remove('abierta');
+});
+render();
+// cada minuto revisa la hora: si empezó un partido, lo quita y rearma los parlays
+setInterval(() => {
+  if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;  // no interrumpir si estás escribiendo
+  const antes = vivos().map(j => j.id).join() + '|' + D.juegos.map(j => j.dia).join();
+  fechar();
+  const ahora = vivos().map(j => j.id).join() + '|' + D.juegos.map(j => j.dia).join();
+  if (antes !== ahora) render();
+  else $('#fecha').textContent = `Son las ${horaAhora()} · ${vivos().length} partidos por jugar · datos de ${D.titulo}`;
+}, 60000);
+</script>
+</body>
+</html>
