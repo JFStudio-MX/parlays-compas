@@ -165,6 +165,11 @@ h2.sec{font-size:16px;margin:26px 0 10px}
 .link{background:none;border:0;color:var(--ac);cursor:pointer;padding:0;text-decoration:underline}
 /* filtros */
 .fpanel{background:var(--s1);border:1px solid rgba(111,155,255,.4);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:grid;gap:10px}
+.fbarra{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--acb);border:1px solid rgba(111,155,255,.35);border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:12.5px;color:var(--mu)}
+.fbarra b{color:var(--tx);font-weight:600}
+.fbarra .ic{color:var(--ac);width:16px;height:16px}
+.fbarra .link:first-of-type{margin-left:auto}
+.sinfiltro{display:none!important}
 .fpanel .fl{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12.5px;color:var(--mu)}
 .fpanel .fl > b{color:var(--tx);font-weight:600;min-width:86px}
 .fpanel input[type=text],.fpanel input[type=number],.fpanel select{background:var(--s2);border:1px solid var(--bd);border-radius:8px;padding:5px 8px}
@@ -818,8 +823,26 @@ function comboHTML(c){
 }
 
 // ---------- panel de filtros
+const aplicaFiltro = () => ['partidos', 'candados', 'joyitas', 'parlays'].includes(st.tab);
+function resumenFiltros(){
+  const xs = [];
+  if (FILT.q) xs.push(`"${FILT.q}"`);
+  if (FILT.clase !== 'todas') xs.push(FILT.clase === 'equipo' ? 'de equipo' : 'de jugador');
+  FILT.mercados.forEach(k => xs.push((MERCADOS.find(([a]) => a === k) || [k, k])[1]));
+  if (FILT.minProb) xs.push(`≥ ${Math.round(FILT.minProb * 100)}%`);
+  if (FILT.momMin !== '' || FILT.momMax !== '') xs.push(`momio ${FILT.momMin || '…'} a ${FILT.momMax || '…'}`);
+  if (FILT.soloReal) xs.push('momio real');
+  if (FILT.soloPA) xs.push('con PA');
+  if (FILT.sinAlertas) xs.push('sin alertas');
+  FILT.ligas.forEach(l => xs.push(l));
+  if (FILT.orden !== 'auto') xs.push({prob: 'más probable', pago: 'más paga', valor: 'más valor', hora: 'por hora'}[FILT.orden]);
+  return xs;
+}
 function filtroHTML(){
-  if (!st.filtro) return '';
+  if (!st.filtro){  // cerrado: si hay filtros puestos, una barrita para que se note que sí está filtrando
+    const xs = resumenFiltros();
+    return xs.length ? `<div class="fbarra">${ic('filtro')}<span>Filtrando: <b>${xs.map(esc).join(' · ')}</b></span><button class="link" data-fabrir="1">cambiar</button><button class="link" data-flimpiar="1">quitar</button></div>` : '';
+  }
   const ligas = [...new Set(vivos().map(j => j.liga_nombre))];
   const ch = (k, v, t) => `<button class="chip ${FILT[k].includes(v) ? 'on' : ''}" data-fmulti="${k}|${esc(v)}">${esc(t)}</button>`;
   return `<div class="fpanel">
@@ -1455,6 +1478,9 @@ function render(){
   $('#filbtn').classList.toggle('on', st.filtro || !!nf);
   $('#filbtn2').innerHTML = `${ic('filtro')}${nf ? nf : ''}`;
   $('#filbtn2').classList.toggle('on', st.filtro || !!nf);
+  // en Mis apuestas e Historial el filtro no aplica: se esconde el botón
+  $('#filbtn').classList.toggle('sinfiltro', !aplicaFiltro());
+  $('#filbtn2').classList.toggle('sinfiltro', !aplicaFiltro());
   const abiertos = [...document.querySelectorAll('.juego.open')].map(e => e.id);
   const foco = document.activeElement && document.activeElement.dataset && document.activeElement.dataset.f;
   // las tarjetas entran animadas solo cuando cambias de sección, deporte, día o partido (no en cada clic)
@@ -1478,7 +1504,7 @@ function render(){
 }
 
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-add],[data-combo],[data-dep],[data-dia],[data-tab],[data-toggle],[data-quitar],[data-cargar],[data-res],[data-borrar],[data-cubrir],[data-excluir],[data-restablecer],[data-fset],[data-fmulti],[data-flimpiar],[data-ejemplo],[data-trslug],[data-monto],#copiar,#vaciar,#fab,#hoy,#lometi,#r-ok,#r-no,#filbtn,#completar,#act,#ia-ir,#ia-borrar,#tr-ir,#imagen,#velo,[data-juego],[data-volver],[data-mas],#filbtn2,#casabtn,[data-casa]');
+  const t = e.target.closest('[data-add],[data-combo],[data-dep],[data-dia],[data-tab],[data-toggle],[data-quitar],[data-cargar],[data-res],[data-borrar],[data-cubrir],[data-excluir],[data-restablecer],[data-fset],[data-fmulti],[data-flimpiar],[data-ejemplo],[data-fabrir],[data-trslug],[data-monto],#copiar,#vaciar,#fab,#hoy,#lometi,#r-ok,#r-no,#filbtn,#completar,#act,#ia-ir,#ia-borrar,#tr-ir,#imagen,#velo,[data-juego],[data-volver],[data-mas],#filbtn2,#casabtn,[data-casa]');
   if (!t) return;
   if (t.dataset.juego) { st.tab = 'partidos'; st.juego = t.dataset.juego; st.mas = false; render(); scrollTo(0, 0); return; }
   if (t.dataset.volver) { st.juego = null; render(); return; }
@@ -1488,6 +1514,7 @@ document.addEventListener('click', async e => {
     CASA_SEL = t.dataset.casa; st.casa = false; localStorage.setItem('parlay_casa', JSON.stringify(CASA_SEL));
     slip.forEach(l => { if (P[l.id] && P[l.id].momio == null) l.momio = momioSug(P[l.id]); }); guardar(); render(); return;
   }
+  if (t.dataset.fabrir) { st.filtro = true; render(); return; }
   if (t.id === 'filbtn2') { st.filtro = !st.filtro; if (st.filtro) scrollTo(0, 0); render(); return; }
   if (t.id === 'imagen') { compartirImagen(t); return; }
   if (t.id === 'velo') { hoja(false); return; }
