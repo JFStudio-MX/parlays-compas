@@ -250,6 +250,8 @@ def momio_pata(p, usar_pa=False):
     """Momio real si existe; si no, uno aproximado (lo justo menos ~6% que se queda la casa)."""
     if p.get("momio"):
         return p["momio"]
+    if p.get("m_est"):  # momio que debería dar la casa según el ganador y el total (modelo.py)
+        return p["m_est"]
     d = max(1.02, 1 / (min(est_de(p, usar_pa), 0.97) * 1.06))
     return americano_de_decimal(d)
 

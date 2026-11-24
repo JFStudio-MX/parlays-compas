@@ -22,14 +22,15 @@ import avisos
 import contexto
 import historial
 import mercados
+import modelo
 import props_odds
 from mercados import PICKS
 import ufc
 from nucleo import (AQUI, B, BASE, BLOQUEO, CACHE, CASAS_PA, COPAS, DATOS, DEPORTE, DIAS_ES, INDIVIDUALES, LIGAS,
                     LIGAS_DOMESTICAS,
                     MESES_ES, MX, NCAA, SALIDA, VERSION_PARTIDO, a_mx, americano_de_decimal, calendario,
-                    cargar_partido, casa_cubre, escribir_json, etiqueta_dia, get_json, leer_json, leer_momios, media,
-                    momio_pata, rasgos, ultimos_ids)
+                    cargar_partido, casa_cubre, escribir_json, etiqueta_dia, get_json, leer_json, leer_momios,
+                    est_de, momio_pata, rasgos, ultimos_ids)
 
 N_PARTIDOS = 10  # historial por equipo
 HILOS = 4
@@ -455,6 +456,7 @@ def main():
             picks += mercados.mercados_jugadores(g, lado, recs[lado], idx, fr)
             picks += mercados.joyitas_jugadores(g, lado, recs[lado], les_por_lado[lado])
         picks += mercados.joyitas_matchup(picks)
+        modelo.aplicar(g, picks)  # momio estimado de la casa para lo que ESPN no trae
         for p in picks:  # el Pago Anticipado solo cuenta si tu casa lo tiene en ese deporte
             if p.get("pa"):
                 p["pa_ok"] = casa_cubre(cfg.get("casa"), p["deporte"])
@@ -486,6 +488,16 @@ def main():
             por_juego[k] = por_juego.get(k, 0) + 1
     for p in cand_final:
         p["candado"] = True
+    # partidos sin candado: lo más seguro de ese partido, marcado como "casi candado"
+    con_cand = {p["juego"] for p in cand_final}
+    for g in juegos:
+        if g["id"] in con_cand or a_mx(g["fecha"]) <= ahora:
+            continue
+        cs = [p for p in todos if p["juego"] == g["id"] and mercados.casi_candado(p)]
+        if cs:
+            p = max(cs, key=mercados.valor_candado)
+            p["candado"] = "casi"
+            cand_final.append(p)
 
     # ---- joyitas
     joy_j = [p for p in todos if p.get("joya") in ("sin_estrella", "rol", "matchup")]
@@ -497,7 +509,25 @@ def main():
         if por_juego.get(p["juego"], 0) < 3:
             joy_final.append(p)
             por_juego[p["juego"]] = por_juego.get(p["juego"], 0) + 1
-    joy_final = joy_final[:45]
+    # partidos sin joyita: la mejor ventaja contra lo que da (o debería dar) la casa, aunque sea chica
+    con_joya = {p["juego"] for p in joy_final}
+    for g in juegos:
+        if g["id"] in con_joya or a_mx(g["fecha"]) <= ahora:
+            continue
+        cs = [p for p in todos if p["juego"] == g["id"] and p.get("p_mkt") and not p.get("joya")
+              and not p.get("alerta") and p["n"] >= 8 and momio_pata(p) >= -300 and p["est"] >= 0.45
+              and mercados.ventaja(p, usar_pa) <= mercados.MAX_VENTAJA]
+        if not cs:
+            continue
+        p = max(cs, key=lambda p: mercados.ventaja(p, usar_pa))
+        edge = mercados.ventaja(p, usar_pa)
+        if edge < 0.03:
+            continue
+        p.update(joya="partido", score=edge * 0.5,
+                 razon=(f"La mejor ventaja que encontré en este partido: la casa {'da' if p.get('real') else 'debería dar'} "
+                        f"~{p['p_mkt'] * 100:.0f}% y la historia dice {p['hits']}/{p['n']}. Ventaja chica "
+                        f"({edge * 100:.0f} puntos): úsala como pata, no como base."))
+        joy_final.append(p)
 
     # ---- momios reales de jugadores (si hay clave)
     pool = mercados.pool_parlays(todos)
@@ -521,7 +551,7 @@ def main():
     n_cal = historial.calificar(ahora)
     cats = {}
     for p in cand_final:
-        cats.setdefault(p["id"], set()).add("candado")
+        cats.setdefault(p["id"], set()).add("casi_candado" if p["candado"] == "casi" else "candado")
     for p in joy_final:
         cats.setdefault(p["id"], set()).add(f"joyita:{p['joya']}")
     for pl in parlays_hoy:
@@ -556,7 +586,7 @@ def main():
         "titulo": f"{DIAS_ES[ahora.weekday()]} {ahora.day} {MESES_ES[ahora.month - 1]} · {ahora:%H:%M}",
         "juegos": juegos,
         "picks": {i: PICKS[i] for i in usados},
-        "candados": [p["id"] for p in sorted(cand_final, key=lambda p: -mercados.valor_candado(p))],
+        "candados": [p["id"] for p in sorted(cand_final, key=lambda p: (p["candado"] == "casi", -mercados.valor_candado(p)))],
         "joyitas": [p["id"] for p in joy_final],
         "pool": [p["id"] for p in pool],
         "combos": combos,

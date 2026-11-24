@@ -136,7 +136,9 @@ def _grupo(rs, usar_pa=False):
 
 NOMBRES_CAT = {"candado": "Candados", "joyita:valor": "Joyitas · valor", "joyita:tipica": "Joyitas · línea típica",
                "joyita:sin_estrella": "Joyitas · sin la estrella", "joyita:rol": "Joyitas · rol nuevo",
-               "joyita:matchup": "Joyitas · matchup", "combinada": "Combinadas"}
+               "joyita:matchup": "Joyitas · matchup", "combinada": "Combinadas",
+               "casi_candado": "Casi candados", "joyita:mercado": "Joyitas · vs mercado estimado",
+               "joyita:partido": "Joyitas · la mejor del partido"}
 
 
 def resumen(usar_pa=True):

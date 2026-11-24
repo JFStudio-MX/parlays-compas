@@ -278,6 +278,9 @@ header{background:linear-gradient(180deg,rgba(11,13,18,.96),rgba(11,13,18,.88))}
 @keyframes sube{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
 .card{background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 40%),var(--s1);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
 .card:hover{border-color:rgba(255,255,255,.14);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.nivel{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.02em;color:var(--gold);background:var(--goldb);border-radius:8px;padding:4px 9px;width:fit-content}
+.nivel .ic{width:14px;height:14px}
+.nivel.joy{color:#c9a8ff;background:rgba(185,162,255,.12)}
 .card.cand{border-color:rgba(255,201,77,.22);position:relative;overflow:hidden}
 .card.cand::after{content:"";position:absolute;inset:-40% auto -40% -60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,215,120,.10),transparent);transform:skewX(-18deg);animation:destello 7s ease-in-out infinite;pointer-events:none}
 @keyframes destello{0%,70%{left:-60%}100%{left:130%}}
@@ -580,7 +583,7 @@ const guardarExcl = () => localStorage.setItem('parlay_excluidas', JSON.stringif
 // Pago Anticipado según la casa que elegiste
 const paActivo = dep => !!(CASAS_PA[CASA_SEL] || {})[dep];
 const estDe = p => (p.pa && paActivo(p.deporte)) ? p.pa.est : p.est;
-function momioSug(p){ return p.momio ?? amer(Math.max(1.02, 1 / (Math.min(estDe(p), .97) * 1.06))); }
+function momioSug(p){ return p.momio ?? p.m_est ?? amer(Math.max(1.02, 1 / (Math.min(estDe(p), .97) * 1.06))); }
 function textoPA(casa){
   const r = CASAS_PA[casa] || {};
   const u = {nba: 'NBA 20', nfl: 'NFL 17', nhl: 'NHL 3 goles', futbol: 'Fútbol 2 goles'};
@@ -715,7 +718,8 @@ function porQue(p){
     if (p.cancha && p.cancha[1] >= 4) x.push(`en su cancha ${p.cancha[0]}/${p.cancha[1]}`);
   }
   const r = p.hits / p.n;
-  if (p.p_mkt) x.push(r >= p.p_mkt + .08 ? `la historia (${pct(r)}) le gana a lo que da la casa (${pct(p.p_mkt)})` : `la casa lo ve en ${pct(p.p_mkt)}`);
+  const casa = p.mkt_est ? 'lo que debería dar la casa por el ganador y el total' : 'lo que da la casa';
+  if (p.p_mkt) x.push(r >= p.p_mkt + .08 ? `la historia (${pct(r)}) le gana a ${casa} (${pct(p.p_mkt)})` : `${p.mkt_est ? 'la casa debería verlo' : 'la casa lo ve'} en ${pct(p.p_mkt)}`);
   if (p.pa && paActivo(p.deporte) && p.pa.extra >= .01) x.push(`con PA de ${CASA_SEL} sube a ${pct(p.pa.est)}`);
   for (const t of p.tags || []){
     if (t.startsWith('⚠')) ojo.push(t.replace('⚠ ', ''));
@@ -794,12 +798,15 @@ function card(p, k = 0){
   const cancha = p.cancha && p.cancha[1] >= 3 ? `<span>${p.clase === 'jugador' ? (p.lado === 'L' ? 'en casa' : 'de visita') : 'en su cancha'} <b>${p.cancha[0]}/${p.cancha[1]}</b></span>` : '';
   const momio = p.momio != null
     ? `<div class="m">${fmtM(p.momio)}</div><small>${esc(p.casa_prop || (j.momios || {}).casa || 'casa')}</small>`
+    : p.m_est != null ? `<div class="m aprox">≈ ${fmtM(p.m_est)}</div><small>lo que debería dar la casa</small>`
     : `<div class="m aprox">≈ ${fmtM(p.justo)}</div><small>momio justo</small>`;
   const tt = titulo(p);
   return `<article class="card ${p.joya ? 'joya' : ''} ${p.candado ? 'cand' : ''}" style="--i:${Math.min(k, 14)}">
     <div class="meta"><span class="dep ${p.deporte}">${DEP[p.deporte]}</span>
       <span class="jg pt" data-juego="${j.id}" style="cursor:pointer" title="Ver el partido">${partidoHTML(j, 15)} <span>· ${esc(cuando(j))}</span></span>
       <button class="add ${en ? 'in' : ''}" data-add="${p.id}" title="Agregar a mi parlay">${en ? '✓' : '+'}</button></div>
+    ${p.candado === 'casi' ? `<div class="nivel">${ic('candados')}Casi candado · lo más seguro de este partido</div>` : ''}
+    ${p.joya === 'partido' ? `<div class="nivel joy">${ic('joyitas')}La mejor del partido · ventaja chica</div>` : ''}
     <div class="cab">${avatar(p)}<div><div class="txt">${esc(tt.t)}</div><div class="sub">${esc(tt.s)}</div></div></div>
     ${tt.a ? `<div class="apu">${esc(tt.a)}</div>` : ''}
     ${p.razon ? `<div class="razon">${esc(p.razon)}</div>` : ''}
@@ -868,7 +875,7 @@ function vista(){
     if (st.tab === 'candados') ids = ids.filter(i => momioSug(P[i]) >= MOMIO_MIN_CANDADO);
     ids = ordenar(ids.map(i => P[i])).map(p => p.id);
     const intro = st.tab === 'candados'
-      ? `<p class="intro"><b>Lo obvio, pero que todavía paga.</b> Se cumplió en 9 de cada 10 partidos recientes (o más), no falló en los últimos 5 y paga mejor que -650 (los de -700 para abajo no salen: casi no pagan). Para cada jugador o mercado sale la línea más alta que se sigue cumpliendo.</p>`
+      ? `<p class="intro"><b>Lo obvio, pero que todavía paga.</b> Se cumplió en 9 de cada 10 partidos recientes (o más), no falló en los últimos 5 y paga mejor que -650 (los de -700 para abajo no salen: casi no pagan). Para cada jugador o mercado sale la línea más alta que se sigue cumpliendo. Abajo, en los partidos sin candado, sale su <b>casi candado</b> (8 de 10 o más): lo más seguro de ese partido.</p>`
       : `<p class="intro"><b>Lo que nadie está viendo.</b> Apuestas donde la casa paga más de lo que dice la historia, jugadores que rinden más cuando falta su estrella, a los que les dieron más minutos o que enfrentan a un rival que deja mucho. Muestras chicas: úsalas como 1 o 2 patas que suben el momio, no como base.</p>`;
     let html = filtroHTML() + avisoHTML() + como() + intro + (ids.length ? `<div class="lista">${ids.map((i, k) => card(P[i], k)).join('')}</div>` : `<div class="vacio">Nada con estos filtros.</div>`);
     if (st.tab === 'joyitas'){

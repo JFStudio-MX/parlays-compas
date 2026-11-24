@@ -22,6 +22,8 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
 ## Pestañas
 
 - **Candados**: se cumplió 9 de 10 veces o más, no falló en los últimos 5 y paga mejor que -650 (los de -700 para abajo no salen). Sale la línea más alta que se sigue cumpliendo.
+  - Si un partido no tiene candado, sale su **casi candado** (8 de 10 o más, sin fallar más de 1 de los últimos 5): lo más seguro de ese partido.
+- **Momio estimado de la casa** (`modelo.py`): ESPN solo trae ganador, spread y total. Con eso se calcula cuánto debería pagar la casa lo demás (+1.5, 1er tiempo, ambos anotan, goles de un equipo, líneas alternas): fútbol y NHL con goles tipo Poisson, NBA/NFL/NCAA con el spread y el total. Sale con ≈ y "lo que debería dar la casa": confírmalo en tu casa.
 - **Joyitas** (lo que nadie ve):
   - *valor*: la casa da menos probabilidad de la que dice la historia.
   - *sin la estrella*: un jugador rinde más cuando falta el lesionado.
@@ -29,6 +31,8 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
   - *matchup*: el rival permite mucho más de lo normal en esa estadística o posición.
   - *árbitro*: en fútbol, si pita uno que saca muchas tarjetas (→ más de X) o muy pocas (→ menos de X) contra el promedio de la liga.
   - *línea típica*: en fútbol.
+  - *vs mercado estimado*: la historia le gana por 7 puntos o más a lo que debería dar la casa.
+  - *la mejor del partido*: si un partido no tiene joyita, sale la apuesta con más ventaja contra la casa (3 puntos o más). Ventaja chica: úsala como pata.
   - Abajo, **combinadas del mismo partido** que pegaron juntas y se refuerzan.
 - **Parlays armados**: se arman al abrir la página con la hora del momento (lo que ya empezó no entra) y respetan los filtros.
   - **Lotería**: 18 patas de varias ligas y días; $10 que hagan $20,000 o más.

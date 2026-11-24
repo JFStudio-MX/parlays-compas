@@ -567,6 +567,17 @@ def cumple_candado(p):
             and p["h5"] >= p["n5"] - (1 if p["clase"] == "equipo" else 0) and p["est"] >= 0.75)
 
 
+def casi_candado(p):
+    """Para los partidos sin candado: lo más seguro que todavía paga algo (más flojo que un candado)."""
+    if p["n"] < (10 if p["clase"] == "equipo" else 7):
+        return False
+    if p.get("alerta") or p.get("joya") in ("rol", "sin_estrella", "matchup"):
+        return False
+    if momio_pata(p) < MOMIO_MIN_CANDADO:
+        return False
+    return p["hits"] / p["n"] >= 0.8 and p["h5"] >= p["n5"] - 1 and p["est"] >= 0.7
+
+
 def valor_candado(p):
     """Para ordenar: los que tienen momio real y las líneas exigentes primero."""
     if p["clase"] == "jugador":
@@ -601,13 +612,34 @@ LINEA_TIPICA = {"Ambos anotan: Sí", "Ambos anotan: No", "Más de 9.5 córners",
                 "1er tiempo: más de 1.5 goles"}
 
 
+MAX_VENTAJA = 0.15  # más que esto contra la casa casi siempre es el historial engañando (otra liga, otro nivel)
+
+
+def ventaja(p, usar_pa=True):
+    """Probabilidad nuestra menos la de la casa. A favor del visitante se descuentan 4 puntos: su historial
+    mezcla partidos en casa (donde rinde más) y la casa sí descuenta que va de visita."""
+    if p.get("sesgo_liga"):
+        return -1.0  # a favor del muy inferior en un partido entre ligas: el historial no sirve
+    return est_de(p, usar_pa) - p["p_mkt"] - (0.04 if LADO_FAM.get(p["fam"]) == "V" else 0)
+
+
 def es_joyita_equipo(p, usar_pa):
     if p["clase"] != "equipo" or p["n"] < 12:
         return False
+    if p.get("mkt_est"):  # sin momio real, pero con lo que la casa debería dar según el ganador y el total
+        edge = ventaja(p, usar_pa)
+        if 0.07 <= edge <= MAX_VENTAJA and p["m_est"] >= -250 and p["hits"] / p["n"] >= 0.65 and not p.get("alerta"):
+            p["joya"] = "mercado"
+            p["score"] = edge * 0.9
+            p["razon"] = (f"Con los momios de ganador y total, la casa debería darle ~{p['p_mkt'] * 100:.0f}% "
+                          f"(≈ {p['m_est']:+d}); en los partidos recientes de los dos se cumplió {p['hits']}/{p['n']} "
+                          f"({p['hits'] / p['n'] * 100:.0f}%). Confirma el momio en tu casa.")
+            return True
+        return False
     if p["real"] and p["p_mkt"]:
         e = est_de(p, usar_pa)
-        edge = e - p["p_mkt"]
-        if edge >= 0.06 and p["momio"] >= -200 and p["hits"] / p["n"] >= 0.6:
+        edge = ventaja(p, usar_pa)
+        if 0.06 <= edge <= MAX_VENTAJA and p["momio"] >= -200 and p["hits"] / p["n"] >= 0.6:
             p["joya"] = "valor"
             p["score"] = edge
             con_pa = usar_pa and p.get("pa") and p["pa"]["extra"] > 0.01
@@ -632,6 +664,7 @@ def pool_parlays(todos):
       la mejor línea por jugador y stat, y un escalón más fácil para la escalera."""
     equipo = [p for p in todos if p["clase"] == "equipo" and p["n"] >= 12
               and ((p["real"] and p["momio"]) or (p["fam"] in ("spa_L", "spa_V") and p["hits"] / p["n"] >= 0.7)
+                   or (p.get("mkt_est") and p["hits"] / p["n"] >= 0.7)
                    or (p["deporte"] == "ufc" and p["hits"] / p["n"] >= 0.7))]
     cond = lambda p: p["n"] >= 7 and not p.get("alerta") and p["hits"] / p["n"] >= 0.8
     jug = mejor_por_familia([p for p in todos if p["clase"] == "jugador" and not p.get("joya")], cond)
