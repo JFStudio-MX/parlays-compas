@@ -569,7 +569,11 @@ def main():
         ps = [PICKS[i] for i in g["picks"]]
         mejores = mercados.mejor_por_familia(ps, lambda p: p["hits"] / p["n"] >= 0.7 and p["n"] >= 5)
         mejores.sort(key=lambda p: (-(p["clase"] == "equipo"), -p["est"]))
-        g["picks"] = [p["id"] for p in mejores[:45]]
+        # el ganador (moneyline) de los dos lados siempre sale, aunque no llegue a 7 de 10
+        ml = [p for p in ps if p["fam"] in ("ml_L", "ml_V", "emp")]
+        ml.sort(key=lambda p: ["ml_L", "emp", "ml_V"].index(p["fam"]))
+        ids_ml = {p["id"] for p in ml}
+        g["picks"] = [p["id"] for p in ml] + [p["id"] for p in mejores if p["id"] not in ids_ml][:45]
         usados |= set(g["picks"])
     for i, c in enumerate(combos):
         c["id"] = f"c{i}"
