@@ -537,7 +537,7 @@ const PUBLICO = !!D.config.publico;  // versión para los compas: sin apuestas, 
 const SERVIDOR = !PUBLICO && location.protocol.startsWith('http');
 const CASAS_PA = D.config.casas_pa || {};
 const CASAS = ['Playdoit', 'Caliente', 'Draftea', 'Stake'];
-const MOMIO_MIN_CANDADO = -650;
+const MOMIO_MIN_CANDADO = -350;
 
 // ---------- la hora de AHORA (al abrir la página): días, horas y qué partidos ya empezaron
 const DIAS_JS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
@@ -689,7 +689,7 @@ function construirParlays(){
   };
   return [
     hacer('Lotería', '$10 que hagan $20,000 o más: 18 partidos de varias ligas y días (un partido por equipo), cada pata entre -400 y +250. Casi nunca pega: es para soñar con poquito.', 2000, 18, .5, [-400, 250], {exacto: true, monto: 10}),
-    hacer('Escalera de candados', 'Puros favoritos tipo -250 a -600: solos no pagan, juntos sí. Revisa en tu casa los momios con ≈.', 9999, 10, .78, [-650, -230]),
+    hacer('Escalera de candados', 'Puros favoritos tipo -180 a -350: solos pagan poco, juntos sí. Revisa en tu casa los momios con ≈.', 9999, 10, .66, [-350, -180]),
     hacer('Corto', 'Busca +160 o más con las patas más seguras que todavía pagan algo.', 2.6, 4, .65),
     hacer('Mediano', 'Busca +500 o más: equilibrio entre pago y probabilidad.', 6, 6, .6),
     hacer('Bombazo', 'Busca +2000 o más: pegar algo grande con poco. Pega pocas veces, apuesta poquito.', 21, 10, .5),
@@ -856,7 +856,7 @@ function filtroHTML(){
     <div class="fl"><b>Buscar</b><input type="text" data-f="q" value="${esc(FILT.q)}" placeholder="equipo o jugador (ej. Lakers, Mahomes)">
       ${['todas', 'equipo', 'jugador'].map(c => `<button class="chip ${FILT.clase === c ? 'on' : ''}" data-fset="clase|${c}">${{todas: 'Todas', equipo: 'De equipo', jugador: 'De jugador'}[c]}</button>`).join('')}</div>
     <div class="fl"><b>Tipo</b>${MERCADOS.map(([k, t]) => ch('mercados', k, t)).join('')}</div>
-    <div class="fl"><b>Momio</b> de <input type="number" data-f="momMin" value="${esc(FILT.momMin)}" placeholder="-650"> a <input type="number" data-f="momMax" value="${esc(FILT.momMax)}" placeholder="+500">
+    <div class="fl"><b>Momio</b> de <input type="number" data-f="momMin" value="${esc(FILT.momMin)}" placeholder="-350"> a <input type="number" data-f="momMax" value="${esc(FILT.momMax)}" placeholder="+500">
       <b style="min-width:auto;margin-left:10px">Prob. mínima</b>${[0, .6, .7, .8, .9].map(v => `<button class="chip ${FILT.minProb === v ? 'on' : ''}" data-fset="minProb|${v}">${v ? Math.round(v * 100) + '%' : 'Cualquiera'}</button>`).join('')}</div>
     <div class="fl"><b>Solo</b><label><input type="checkbox" data-fchk="soloReal" ${FILT.soloReal ? 'checked' : ''}> con momio real</label>
       <label><input type="checkbox" data-fchk="soloPA" ${FILT.soloPA ? 'checked' : ''}> con Pago Anticipado de ${esc(CASA_SEL)}</label>
@@ -875,7 +875,7 @@ function vista(){
     if (st.tab === 'candados') ids = ids.filter(i => momioSug(P[i]) >= MOMIO_MIN_CANDADO);
     ids = ordenar(ids.map(i => P[i])).map(p => p.id);
     const intro = st.tab === 'candados'
-      ? `<p class="intro"><b>Lo obvio, pero que todavía paga.</b> Se cumplió en 9 de cada 10 partidos recientes (o más), no falló en los últimos 5 y paga mejor que -650 (los de -700 para abajo no salen: casi no pagan). Para cada jugador o mercado sale la línea más alta que se sigue cumpliendo. Abajo, en los partidos sin candado, sale su <b>casi candado</b> (8 de 10 o más): lo más seguro de ese partido.</p>`
+      ? `<p class="intro"><b>Lo obvio, pero que todavía paga.</b> Se cumplió en 9 de cada 10 partidos recientes (o más), no falló en los últimos 5 y paga -350 o mejor (más caros no salen: pagan muy poco y esas líneas tan bajas muchas veces ni existen en la casa). Para cada jugador o mercado sale la línea más alta que se sigue cumpliendo. Abajo, en los partidos sin candado, sale su <b>casi candado</b> (8 de 10 o más): lo más seguro de ese partido.</p>`
       : `<p class="intro"><b>Lo que nadie está viendo.</b> Apuestas donde la casa paga más de lo que dice la historia, jugadores que rinden más cuando falta su estrella, a los que les dieron más minutos o que enfrentan a un rival que deja mucho. Muestras chicas: úsalas como 1 o 2 patas que suben el momio, no como base.</p>`;
     let html = filtroHTML() + avisoHTML() + como() + intro + (ids.length ? `<div class="lista">${ids.map((i, k) => card(P[i], k)).join('')}</div>` : `<div class="vacio">Nada con estos filtros.</div>`);
     if (st.tab === 'joyitas'){

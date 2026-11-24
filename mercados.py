@@ -553,10 +553,17 @@ def joyitas_matchup(picks):
 
 # =========================================================================== selección
 
-MOMIO_MIN_CANDADO = -650  # más abajo que esto (-700, -1000…) paga demasiado poco aunque pegue
+MOMIO_MIN_CANDADO = -350  # más abajo que esto paga muy poco, y esas líneas tan bajas muchas veces ni salen en Playdoit
+
+
+def linea_sin_mercado(p):
+    """Líneas que casi nunca ofrece la casa (Playdoit no da 0.5 tiros de muchos jugadores): no van de candado."""
+    return p.get("deporte") == "futbol" and p.get("stat") in ("tir", "tap") and p.get("orden") == 1
 
 
 def cumple_candado(p):
+    if linea_sin_mercado(p):
+        return False
     if p["n"] < (12 if p["clase"] == "equipo" else 7):
         return False
     if p.get("alerta") or p.get("joya") in ("rol", "sin_estrella", "matchup"):
@@ -564,18 +571,20 @@ def cumple_candado(p):
     if momio_pata(p) < MOMIO_MIN_CANDADO:
         return False
     return (p["hits"] / p["n"] >= (0.85 if p["clase"] == "equipo" else 0.9)
-            and p["h5"] >= p["n5"] - (1 if p["clase"] == "equipo" else 0) and p["est"] >= 0.75)
+            and p["h5"] >= p["n5"] - (1 if p["clase"] == "equipo" else 0) and p["est"] >= 0.66)
 
 
 def casi_candado(p):
     """Para los partidos sin candado: lo más seguro que todavía paga algo (más flojo que un candado)."""
+    if linea_sin_mercado(p):
+        return False
     if p["n"] < (10 if p["clase"] == "equipo" else 7):
         return False
     if p.get("alerta") or p.get("joya") in ("rol", "sin_estrella", "matchup"):
         return False
     if momio_pata(p) < MOMIO_MIN_CANDADO:
         return False
-    return p["hits"] / p["n"] >= 0.8 and p["h5"] >= p["n5"] - 1 and p["est"] >= 0.7
+    return p["hits"] / p["n"] >= 0.8 and p["h5"] >= p["n5"] - 1 and p["est"] >= 0.62
 
 
 def valor_candado(p):
@@ -677,8 +686,8 @@ def pool_parlays(todos):
 # nombre, descripción, pago objetivo (decimal), patas máx., prob. mínima por pata, rango de momio, exacto
 PLANTILLAS = [
     ("Lotería", "$10 que hagan $20,000 o más: 18 partidos de varias ligas y días.", 2000.0, 18, 0.5, (-400, 250), True),
-    ("Escalera de candados", "Puros favoritos tipo -250 a -600: solos no pagan, juntos sí. "
-     "Revisa en tu casa los momios con ≈.", 9999, 10, 0.78, (-650, -230), False),
+    ("Escalera de candados", "Puros favoritos tipo -180 a -350: solos pagan poco, juntos sí. "
+     "Revisa en tu casa los momios con ≈.", 9999, 10, 0.66, (-350, -180), False),
     ("Corto", "Busca +160 o más con las patas más seguras que todavía pagan algo.", 2.6, 4, 0.65, None, False),
     ("Mediano", "Busca +500 o más: equilibrio entre pago y probabilidad.", 6.0, 6, 0.6, None, False),
     ("Bombazo", "Busca +2000 o más: pegar algo grande con poco. Pega pocas veces, apuesta poquito.", 21.0, 10, 0.5, None, False),

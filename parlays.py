@@ -30,7 +30,7 @@ from nucleo import (AQUI, B, BASE, BLOQUEO, CACHE, CASAS_PA, COPAS, DATOS, DEPOR
                     LIGAS_DOMESTICAS,
                     MESES_ES, MX, NCAA, SALIDA, VERSION_PARTIDO, a_mx, americano_de_decimal, calendario,
                     cargar_partido, casa_cubre, escribir_json, etiqueta_dia, get_json, leer_json, leer_momios,
-                    est_de, momio_pata, rasgos, ultimos_ids)
+                    est_de, media, momio_pata, rasgos, ultimos_ids)
 
 N_PARTIDOS = 10  # historial por equipo
 HILOS = 4

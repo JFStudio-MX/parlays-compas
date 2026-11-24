@@ -21,7 +21,7 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
 
 ## Pestañas
 
-- **Candados**: se cumplió 9 de 10 veces o más, no falló en los últimos 5 y paga mejor que -650 (los de -700 para abajo no salen). Sale la línea más alta que se sigue cumpliendo.
+- **Candados**: se cumplió 9 de 10 veces o más, no falló en los últimos 5 y paga -350 o mejor (más caros no salen: pagan muy poco y muchas veces esas líneas ni existen en Playdoit, como 0.5 tiros). Sale la línea más alta que se sigue cumpliendo.
   - Si un partido no tiene candado, sale su **casi candado** (8 de 10 o más, sin fallar más de 1 de los últimos 5): lo más seguro de ese partido.
 - **Momio estimado de la casa** (`modelo.py`): ESPN solo trae ganador, spread y total. Con eso se calcula cuánto debería pagar la casa lo demás (+1.5, 1er tiempo, ambos anotan, goles de un equipo, líneas alternas): fútbol y NHL con goles tipo Poisson, NBA/NFL/NCAA con el spread y el total. Sale con ≈ y "lo que debería dar la casa": confírmalo en tu casa.
 - **Joyitas** (lo que nadie ve):
@@ -36,7 +36,7 @@ Datos gratis de ESPN: momios de DraftKings, resultados, jugadas, lesiones, pron�
   - Abajo, **combinadas del mismo partido** que pegaron juntas y se refuerzan.
 - **Parlays armados**: se arman al abrir la página con la hora del momento (lo que ya empezó no entra) y respetan los filtros.
   - **Lotería**: 18 patas de varias ligas y días; $10 que hagan $20,000 o más.
-  - **Escalera de candados**: 10 favoritos de -250 a -600.
+  - **Escalera de candados**: 10 favoritos de -180 a -350.
   - **Corto**: busca +160.
   - **Mediano**: busca +500.
   - **Bombazo**: busca +2000.
