@@ -1,0 +1,15 @@
+{
+  "framework": null,
+  "installCommand": "echo sin instalar",
+  "buildCommand": "echo sin build",
+  "outputDirectory": "publico",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ]
+}
